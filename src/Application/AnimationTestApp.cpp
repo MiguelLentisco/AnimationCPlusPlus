@@ -34,6 +34,8 @@ void AnimationTestApp::Initialize()
     m_CurrentPoseVisual = new DebugDrawer();
     m_CurrentPoseVisual->FromPose(m_CurrentPose);
     m_CurrentPoseVisual->UpdateOpenGLBuffers();
+
+    bShowBasePose = false;
     
 } // Initialize
 
@@ -77,7 +79,11 @@ void AnimationTestApp::Render(float inAspectRatio)
     static const Mat4 VIEW = Mat4::CreateLookAt({0, 4, 7}, {0, 4, 0}, {0, 1, 0});
     const Mat4 mvp = projection * VIEW; // No model
 
-    //m_RestPoseVisual->Draw(DebugDrawMode::Lines, {1, 0, 0}, mvp);
+    if (bShowBasePose)
+    {
+        m_RestPoseVisual->Draw(DebugDrawMode::Lines, {1, 0, 0}, mvp);
+    }
+    
     m_CurrentPoseVisual->UpdateOpenGLBuffers();
     m_CurrentPoseVisual->Draw(DebugDrawMode::Lines, {0, 0, 1}, mvp);
     

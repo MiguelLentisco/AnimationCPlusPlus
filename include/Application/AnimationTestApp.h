@@ -28,6 +28,8 @@ protected:
     
     DebugDrawer* m_RestPoseVisual = nullptr;
     DebugDrawer* m_CurrentPoseVisual = nullptr;
+
+    bool bShowBasePose = false;
     
     void SwapAnimation(const std::string& clipName);
     void SwapAnimation(unsigned int idx);
