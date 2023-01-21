@@ -1,6 +1,6 @@
-﻿#include "Renderer/Draw.h"
+﻿#include "Render/Draw.h"
 
-#include "Renderer/IndexBuffer.h"
+#include "Render/IndexBuffer.h"
 #include "glad/glad.h"
 #include <iostream>
 

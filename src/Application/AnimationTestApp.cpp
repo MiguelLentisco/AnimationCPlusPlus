@@ -4,7 +4,7 @@
 #include "Core/Mat4.h"
 #include "Core/Vec3.h"
 #include "GLTF/GLTFLoader.h"
-#include "Renderer/DebugDrawer.h"
+#include "Render/DebugDrawer.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 

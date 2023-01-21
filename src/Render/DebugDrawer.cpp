@@ -1,12 +1,12 @@
-﻿#include "Renderer/DebugDrawer.h"
+﻿#include "Render/DebugDrawer.h"
 
-#include "Animation/Pose.h"
+#include "SkeletalMesh/Pose.h"
 #include "Core/Transform.h"
 #include "Core/Vec3.h"
-#include "Renderer/Attribute.h"
-#include "Renderer/Draw.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Uniform.h"
+#include "Render/Attribute.h"
+#include "Render/Draw.h"
+#include "Render/Shader.h"
+#include "Render/Uniform.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 

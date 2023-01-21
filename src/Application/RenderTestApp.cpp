@@ -4,12 +4,12 @@
 #include "Core/Quat.h"
 #include "Core/Vec3.h"
 #include "Core/TVec2.h"
-#include "Renderer/Attribute.h"
-#include "Renderer/Draw.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Texture.h"
-#include "Renderer/IndexBuffer.h"
-#include "Renderer/Uniform.h"
+#include "Render/Attribute.h"
+#include "Render/Draw.h"
+#include "Render/Shader.h"
+#include "Render/Texture.h"
+#include "Render/IndexBuffer.h"
+#include "Render/Uniform.h"
 #include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------

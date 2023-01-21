@@ -3,15 +3,16 @@
 #include <iostream>
 #include <ostream>
 
-#include "GLTF/cgltf.h"
 #include "Animation/Clip.h"
-#include "Animation/Interpolation.h"
-#include "Animation/Pose.h"
 #include "Animation/Frame.h"
+#include "Animation/Interpolation.h"
 #include "Animation/Track.h"
 #include "Animation/TransformTrack.h"
 #include "Core/Mat4.h"
 #include "Core/Transform.h"
+#include "GLTF/cgltf.h"
+#include "SkeletalMesh/Pose.h"
+#include "SkeletalMesh/Skeleton.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -72,7 +73,8 @@ namespace GLTFHelpers
         {
             cgltf_accessor_read_float(&accessor, i, &out[i * compCount], compCount);
         }
-    }
+        
+    } // GetScalarValues
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -202,6 +204,57 @@ Pose GLTFLoader::LoadRestPose(const cgltf_data* data)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+Pose GLTFLoader::LoadBindPose(const cgltf_data* data)
+{
+    const Pose restPose = LoadRestPose(data);
+    const unsigned int numBones = restPose.GetSize();
+
+    // Use rest pose as default value if inverse bind pose is not available
+    std::vector<Transform> worldBindPose(numBones);
+    for (unsigned int i = 0; i < numBones; ++i)
+    {
+        worldBindPose[i] = restPose.GetGlobalTransform(i);
+    }
+
+    // Load and use inverse bind pose to obtain the bind transform
+    const unsigned int numSkins = data->skins_count;
+    for (unsigned int i = 0; i < numSkins; ++i)
+    {
+        const cgltf_skin& skin = data->skins[i];
+        std::vector<float> invBindAccessor;
+        GLTFHelpers::GetScalarValues(invBindAccessor, 16, *skin.inverse_bind_matrices);
+
+        const unsigned int numJoints = skin.joints_count;
+        for (unsigned int j = 0; j < numJoints; ++j)
+        {
+            const Transform bindTransform = Transform::FromMat4(Mat4(&invBindAccessor[j * 16]).Inverse());
+            const int jointIdx = GLTFHelpers::GetNodeIndex(skin.joints[j], data->nodes, numBones);
+            worldBindPose[jointIdx] = bindTransform;
+        }
+    }
+
+    // Obtain the local transform of each joint using the world transform of the parent joint
+    Pose bindPose = restPose;
+    for (unsigned int i = 0; i < numBones; ++i)
+    {
+        Transform current = worldBindPose[i];
+        
+        const int parentID = bindPose.GetParent(i);
+        if (parentID >= 0)
+        {
+            const Transform& parent = worldBindPose[parentID];
+            current = parent.Inverse().Combine(current);
+        }
+
+        bindPose.SetLocalTransform(i, current);
+    }
+
+    return bindPose;
+    
+} // LoadBindPose
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 std::vector<std::string> GLTFLoader::LoadJointNames(const cgltf_data* data)
 {
     const unsigned int boneCount = data->nodes_count;
@@ -216,6 +269,14 @@ std::vector<std::string> GLTFLoader::LoadJointNames(const cgltf_data* data)
     return result;
     
 } // LoadJointNames
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+Skeleton GLTFLoader::LoadSkeleton(const cgltf_data* data)
+{
+    return {LoadRestPose(data), LoadBindPose(data), LoadJointNames(data)};
+    
+} // LoadSkeleton
 
 // ---------------------------------------------------------------------------------------------------------------------
 

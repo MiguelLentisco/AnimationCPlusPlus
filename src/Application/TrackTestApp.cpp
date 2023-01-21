@@ -6,7 +6,7 @@
 #include "Animation/Frame.h"
 #include "Core/Mat4.h"
 #include "Core/Quat.h"
-#include "Renderer/DebugDrawer.h"
+#include "Render/DebugDrawer.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 

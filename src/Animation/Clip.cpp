@@ -2,9 +2,9 @@
 
 #include <algorithm>
 
-#include "Animation/Pose.h"
 #include "Animation/TransformTrack.h"
 #include "Core/Transform.h"
+#include "SkeletalMesh/Pose.h"
 #include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------

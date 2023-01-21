@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Application.h"
-#include "Animation/Pose.h"
+#include "SkeletalMesh/Pose.h"
 
 class Clip;
 class DebugDrawer;
