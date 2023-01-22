@@ -1,6 +1,7 @@
 ﻿#include "SkeletalMesh/SkeletalMesh.h"
 
 #include "Core/Mat4.h"
+#include "Core/Transform.h"
 #include "Core/TVec2.h"
 #include "Core/TVec4.h"
 #include "Core/Vec3.h"
@@ -194,9 +195,37 @@ void SkeletalMesh::DrawInstanced(unsigned numInstances)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SkeletalMesh::CPUSkin(Skeleton& skeleton, Pose& pose)
+void SkeletalMesh::CPUSkin(const Skeleton& skeleton, const Pose& pose)
 {
-}
+    const unsigned int numVerts = m_Position.size();
+    if (numVerts == 0)
+    {
+        return;
+    }
+    
+    m_SkinnedPosition.resize(numVerts);
+    m_SkinnedNormal.resize(numVerts);
+
+    pose.GetMatrixPalette(m_PosePalette);
+    const std::vector<Mat4>& invPosePalette = skeleton.GetInvBindPose();
+
+    for (unsigned int i = 0; i < numVerts; ++i)
+    {
+        Mat4 skinMatrix;
+        for (unsigned int j = 0; j < 4; ++j)
+        {
+            int boneID = m_BonesID[i][j];
+            skinMatrix += m_PosePalette[boneID] * invPosePalette[boneID] * m_BonesWeight[i][j];
+        }
+        
+        m_SkinnedPosition[i] = skinMatrix.TransformPoint(m_Position[i]);
+        m_SkinnedNormal[i] = skinMatrix.TransformVector(m_Normal[i]);
+    }
+    
+    m_PositionAttribute->Set(m_SkinnedPosition);
+    m_NormalAttribute->Set(m_SkinnedNormal);
+    
+} // CPUSkin
 
 // ---------------------------------------------------------------------------------------------------------------------
 

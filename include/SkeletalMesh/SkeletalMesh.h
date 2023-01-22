@@ -36,7 +36,7 @@ public:
     void Draw();
     void DrawInstanced(unsigned int numInstances);
 
-    void CPUSkin(Skeleton& skeleton, Pose& pose);
+    void CPUSkin(const Skeleton& skeleton, const Pose& pose);
 
 protected:
     std::vector<Vec3> m_Position;

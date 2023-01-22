@@ -139,6 +139,19 @@ Mat4 Mat4::operator*(const Vec4& v) const
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+Mat4& Mat4::operator+=(const Mat4& m)
+{
+    right += m.right;
+    up += m.up;
+    forward += m.forward;
+    position += m.position;
+
+    return *this;
+    
+} // operator+=
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 Vec3 Mat4::TransformVector(const Vec3& v) const
 {
     return
