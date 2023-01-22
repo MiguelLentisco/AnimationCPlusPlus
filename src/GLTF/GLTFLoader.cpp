@@ -16,128 +16,6 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-namespace GLTFHelpers
-{
-    Transform GetLocalTransforms(const cgltf_node& n)
-    {
-        if (n.has_matrix)
-        {
-            return Transform::FromMat4(Mat4(&n.matrix[0]));
-        }
-
-        Transform result;
-        if (n.has_translation)
-        {
-            result.position = {&n.translation[0]};
-        }
-        if (n.has_rotation)
-        {
-            result.rotation = {&n.rotation[0]};
-        }
-        if (n.has_scale)
-        {
-            result.scale =  {&n.scale[0]};
-        }
-
-        return result;
-        
-    } // GetLocalTransforms
-    
-    // -----------------------------------------------------------------------------------------------------------------
-
-    int GetNodeIndex(const cgltf_node* target, const cgltf_node* allNodes, unsigned int numNodes)
-    {
-        if (target == nullptr)
-        {
-            return -1;
-        }
-
-        for (unsigned int i = 0; i < numNodes; ++i)
-        {
-            if (target == &allNodes[i])
-            {
-                return static_cast<int>(i);
-            }
-        }
-        
-        return -1;
-        
-    } // GetNodeIndex
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    void GetScalarValues(std::vector<float>& out, unsigned int compCount, const cgltf_accessor& accessor)
-    {
-        out.resize(accessor.count * compCount);
-        for (cgltf_size i = 0; i < accessor.count; ++i)
-        {
-            cgltf_accessor_read_float(&accessor, i, &out[i * compCount], compCount);
-        }
-        
-    } // GetScalarValues
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    template<typename T, int N>
-    void TrackFromChannel(Track<T, N>& result, const cgltf_animation_channel& channel)
-    {
-        const cgltf_animation_sampler& sampler = *channel.sampler;
-
-        // Set interpolation
-        Interpolation interpolation = Interpolation::Constant;
-        bool bSamplerCubic = false;
-        if (sampler.interpolation == cgltf_interpolation_type_linear)
-        {
-            interpolation = Interpolation::Linear;
-        }
-        else if (sampler.interpolation == cgltf_interpolation_type_cubic_spline)
-        {
-            bSamplerCubic = true;
-            interpolation = Interpolation::Cubic;
-        }
-        result.SetInterpolation(interpolation);
-
-        // Get time and values and fill data
-        std::vector<float> time;
-        GetScalarValues(time, 1, *sampler.input);
-
-        std::vector<float> val;
-        GetScalarValues(val, N, *sampler.output);
-
-        const unsigned int numFrames = sampler.input->count;
-        const unsigned int compCount = val.size() / time.size();
-        result.Resize(numFrames);
-
-        for (unsigned int i = 0; i < numFrames; ++i)
-        {
-            const unsigned int baseIdx = i * compCount;
-            unsigned int offset = 0;
-            Frame<N>& frame = result[i];
-
-            frame.m_Time = time[i];
-
-            for (unsigned int comp = 0; comp < N; ++comp)
-            {
-                frame.m_In[comp] = bSamplerCubic ? val[baseIdx + offset++] : 0.f;
-            }
-            
-            for (unsigned int comp = 0; comp < N; ++comp)
-            {
-                frame.m_Value[comp] = val[baseIdx + offset++];
-            }
-            
-            for (unsigned int comp = 0; comp < N; ++comp)
-            {
-                frame.m_Out[comp] = bSamplerCubic ? val[baseIdx + offset++] : 0.f;
-            }
-        }
-        
-    } // TrackFromChannel
-    
-} // GLTFHelpers
-
-// ---------------------------------------------------------------------------------------------------------------------
-
 cgltf_data* GLTFLoader::LoadGLTFFile(const char* path)
 {
     constexpr cgltf_options options = {};
@@ -194,8 +72,8 @@ Pose GLTFLoader::LoadRestPose(const cgltf_data* data)
     for (unsigned int i = 0; i < boneCount; ++i)
     {
         cgltf_node& node = data->nodes[i];
-        result.SetLocalTransform(i, GLTFHelpers::GetLocalTransforms(node));
-        result.SetParent(i, GLTFHelpers::GetNodeIndex(node.parent, data->nodes, boneCount));
+        result.SetLocalTransform(i, GetLocalTransforms(node));
+        result.SetParent(i, GetNodeIndex(node.parent, data->nodes, boneCount));
     }
 
     return result;
@@ -222,13 +100,13 @@ Pose GLTFLoader::LoadBindPose(const cgltf_data* data)
     {
         const cgltf_skin& skin = data->skins[i];
         std::vector<float> invBindAccessor;
-        GLTFHelpers::GetScalarValues(invBindAccessor, 16, *skin.inverse_bind_matrices);
+        GetScalarValues(invBindAccessor, 16, *skin.inverse_bind_matrices);
 
         const unsigned int numJoints = skin.joints_count;
         for (unsigned int j = 0; j < numJoints; ++j)
         {
             const Transform bindTransform = Transform::FromMat4(Mat4(&invBindAccessor[j * 16]).Inverse());
-            const int jointIdx = GLTFHelpers::GetNodeIndex(skin.joints[j], data->nodes, numBones);
+            const int jointIdx = GetNodeIndex(skin.joints[j], data->nodes, numBones);
             worldBindPose[jointIdx] = bindTransform;
         }
     }
@@ -298,23 +176,23 @@ std::vector<Clip> GLTFLoader::LoadAnimationClips(const cgltf_data* data)
         {
             const cgltf_animation_channel& channel = animation.channels[j];
             const cgltf_node* target = channel.target_node;
-            const int nodeID = GLTFHelpers::GetNodeIndex(target, data->nodes, numNodes);
+            const int nodeID = GetNodeIndex(target, data->nodes, numNodes);
 
             TransformTrack& transformTrack = result[i][nodeID];
             if (channel.target_path == cgltf_animation_path_type_translation)
             {
                 VectorTrack& track = transformTrack.GetPositionTrack();
-                GLTFHelpers::TrackFromChannel<Vec3, 3>(track, channel);
+                TrackFromChannel<Vec3, 3>(track, channel);
             }
             else if (channel.target_path == cgltf_animation_path_type_scale)
             {
                 VectorTrack& track = transformTrack.GetScaleTrack();
-                GLTFHelpers::TrackFromChannel<Vec3, 3>(track, channel);
+                TrackFromChannel<Vec3, 3>(track, channel);
             }
             else if (channel.target_path == cgltf_animation_path_type_rotation)
             {
                 QuaternionTrack& track = transformTrack.GetRotationTrack();
-                GLTFHelpers::TrackFromChannel<Quat,4>(track, channel);
+                TrackFromChannel<Quat,4>(track, channel);
             }
         }
 
@@ -327,3 +205,120 @@ std::vector<Clip> GLTFLoader::LoadAnimationClips(const cgltf_data* data)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+Transform GLTFLoader::GetLocalTransforms(const cgltf_node& n)
+{
+    if (n.has_matrix)
+    {
+        return Transform::FromMat4(Mat4(&n.matrix[0]));
+    }
+
+    Transform result;
+    if (n.has_translation)
+    {
+        result.position = {&n.translation[0]};
+    }
+    if (n.has_rotation)
+    {
+        result.rotation = {&n.rotation[0]};
+    }
+    if (n.has_scale)
+    {
+        result.scale =  {&n.scale[0]};
+    }
+
+    return result;
+        
+} // GetLocalTransforms
+    
+// ---------------------------------------------------------------------------------------------------------------------
+
+int GLTFLoader::GetNodeIndex(const cgltf_node* target, const cgltf_node* allNodes, unsigned int numNodes)
+{
+    if (target == nullptr)
+    {
+        return -1;
+    }
+
+    for (unsigned int i = 0; i < numNodes; ++i)
+    {
+        if (target == &allNodes[i])
+        {
+            return static_cast<int>(i);
+        }
+    }
+    
+    return -1;
+    
+} // GetNodeIndex
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void GLTFLoader::GetScalarValues(std::vector<float>& out, unsigned int compCount, const cgltf_accessor& accessor)
+{
+    out.resize(accessor.count * compCount);
+    for (cgltf_size i = 0; i < accessor.count; ++i)
+    {
+        cgltf_accessor_read_float(&accessor, i, &out[i * compCount], compCount);
+    }
+    
+} // GetScalarValues
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+template<typename T, int N>
+void GLTFLoader::TrackFromChannel(Track<T, N>& result, const cgltf_animation_channel& channel)
+{
+    const cgltf_animation_sampler& sampler = *channel.sampler;
+
+    // Set interpolation
+    Interpolation interpolation = Interpolation::Constant;
+    bool bSamplerCubic = false;
+    if (sampler.interpolation == cgltf_interpolation_type_linear)
+    {
+        interpolation = Interpolation::Linear;
+    }
+    else if (sampler.interpolation == cgltf_interpolation_type_cubic_spline)
+    {
+        bSamplerCubic = true;
+        interpolation = Interpolation::Cubic;
+    }
+    result.SetInterpolation(interpolation);
+
+    // Get time and values and fill data
+    std::vector<float> time;
+    GetScalarValues(time, 1, *sampler.input);
+
+    std::vector<float> val;
+    GetScalarValues(val, N, *sampler.output);
+
+    const unsigned int numFrames = sampler.input->count;
+    const unsigned int compCount = val.size() / time.size();
+    result.Resize(numFrames);
+
+    for (unsigned int i = 0; i < numFrames; ++i)
+    {
+        const unsigned int baseIdx = i * compCount;
+        unsigned int offset = 0;
+        Frame<N>& frame = result[i];
+
+        frame.m_Time = time[i];
+
+        for (unsigned int comp = 0; comp < N; ++comp)
+        {
+            frame.m_In[comp] = bSamplerCubic ? val[baseIdx + offset++] : 0.f;
+        }
+        
+        for (unsigned int comp = 0; comp < N; ++comp)
+        {
+            frame.m_Value[comp] = val[baseIdx + offset++];
+        }
+        
+        for (unsigned int comp = 0; comp < N; ++comp)
+        {
+            frame.m_Out[comp] = bSamplerCubic ? val[baseIdx + offset++] : 0.f;
+        }
+    }
+    
+} // TrackFromChannel
+
+// ---------------------------------------------------------------------------------------------------------------------
