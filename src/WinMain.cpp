@@ -7,9 +7,7 @@
 #include <windows.h>
 #include <iostream>
 
-#include "Application/AnimationTestApp.h"
-#include "Application/Application.h"
-#include "Application/TrackTestApp.h"
+#include "Application/SkeletalMeshAnimationApp.h"
 
 // Forward declaration
 int WINAPI WinMain(HINSTANCE, HINSTANCE, PSTR, int);
@@ -49,7 +47,7 @@ GLuint gVertexArrayObject = 0;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
     // Standard window definition
-    gApplication = new AnimationTestApp();
+    gApplication = new SkeletalMeshAnimationApp();
     
     WNDCLASSEX wndClass;
     wndClass.cbSize = sizeof(WNDCLASSEX);

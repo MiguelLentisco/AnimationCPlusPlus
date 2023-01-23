@@ -75,7 +75,7 @@ void Texture::Set(unsigned uniformIdx, unsigned textureIdx)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void Texture::UnSet(unsigned textureIdx)
+void Texture::Unset(unsigned textureIdx)
 {
     glActiveTexture(GL_TEXTURE0 + textureIdx);
     glBindTexture(GL_TEXTURE_2D, 0);

@@ -1,4 +1,4 @@
-﻿#include "Application/AnimationTestApp.h"
+﻿#include "Application/SkeletalAnimationApp.h"
 
 #include "Animation/Clip.h"
 #include "Core/Mat4.h"
@@ -8,14 +8,14 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-AnimationTestApp::AnimationTestApp() : Application()
+SkeletalAnimationApp::SkeletalAnimationApp() : Application()
 {
     
-} // AnimationTestApp
+} // SkeletalAnimationApp
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void AnimationTestApp::Initialize()
+void SkeletalAnimationApp::Initialize()
 {
     cgltf_data* gltf_data = GLTFLoader::LoadGLTFFile("Assets/Woman.gltf");
 
@@ -45,19 +45,11 @@ void AnimationTestApp::Initialize()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void AnimationTestApp::Update(float deltaTime)
+void SkeletalAnimationApp::Update(float deltaTime)
 {
     if (m_CurrentClip < 0)
     {
-        m_PlaybackTime += deltaTime;
         return;
-    }
-    
-    static bool bChangeAnimation = false;
-    if (bChangeAnimation)
-    {
-        bChangeAnimation = false;
-        SwapAnimation((m_CurrentClip + 1) % m_Clips.size());
     }
     
     m_PlaybackTime += deltaTime;
@@ -66,8 +58,9 @@ void AnimationTestApp::Update(float deltaTime)
     const float clipEndTime = currentClip.GetEndTime();
     if (m_PlaybackTime >= clipEndTime)
     {
-        m_PlaybackTime = clipEndTime;
-        bChangeAnimation = true;
+        const float diff = m_PlaybackTime - clipEndTime;
+        NextAnimation();
+        m_PlaybackTime = diff;
     }
     
     m_PlaybackTime = m_Clips[m_CurrentClip].Sample(m_CurrentPose, m_PlaybackTime);
@@ -77,7 +70,7 @@ void AnimationTestApp::Update(float deltaTime)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void AnimationTestApp::Render(float inAspectRatio)
+void SkeletalAnimationApp::Render(float inAspectRatio)
 {
     const Mat4 projection = Mat4::CreatePerspective(60.0f, inAspectRatio, 0.01f, 1000.0f);
     static const Mat4 VIEW = Mat4::CreateLookAt({0, 4, -7}, {0, 4, 0}, {0, 1, 0});
@@ -96,7 +89,7 @@ void AnimationTestApp::Render(float inAspectRatio)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void AnimationTestApp::Shutdown()
+void SkeletalAnimationApp::Shutdown()
 {
     delete m_RestPoseVisual;
     delete m_CurrentPoseVisual;
@@ -106,8 +99,11 @@ void AnimationTestApp::Shutdown()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void AnimationTestApp::SwapAnimation(const std::string& clipName)
+void SkeletalAnimationApp::SwapAnimation(const std::string& clipName)
 {
+    // Reset animation
+    m_PlaybackTime = 0.f;
+    m_CurrentPose = m_Skeleton.GetRestPose();
     m_CurrentClip = -1;
     
     const unsigned int numUIClips = m_Clips.size();
@@ -116,28 +112,29 @@ void AnimationTestApp::SwapAnimation(const std::string& clipName)
         if (m_Clips[i].GetName() == clipName)
         {
             m_CurrentClip = static_cast<int>(i);
-            break;
+            return;
         }
     }
-    
-    // Reset base pose
-    m_PlaybackTime = 0.f;
-    m_CurrentPose = m_Skeleton.GetRestPose();
     
 } // SwapAnimation
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void AnimationTestApp::SwapAnimation(unsigned idx)
+void SkeletalAnimationApp::SwapAnimation(unsigned idx)
 {
-    if (idx >= m_Clips.size())
-    {
-        m_CurrentClip = -1;
-        return;
-    }
-
-    SwapAnimation(m_Clips[idx].GetName());
+    // Reset animation
+    m_PlaybackTime = 0.f;
+    m_CurrentPose = m_Skeleton.GetRestPose();
+    m_CurrentClip = idx >= m_Clips.size() ? -1 : static_cast<int>(idx);
     
 } // SwapAnimation
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void SkeletalAnimationApp::NextAnimation()
+{
+    SwapAnimation((m_CurrentClip + 1) % m_Clips.size());
+    
+} // NextAnimation
 
 // ---------------------------------------------------------------------------------------------------------------------

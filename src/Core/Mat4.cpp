@@ -264,10 +264,10 @@ void Mat4::Invert()
 Mat4 Mat4::Inverse() const
 {
     const float det = Determinant();
-    if (Utils::IsZero(det))
+    if (Utils::IsZero(det, 1E-10f))
     {
         std::cout << "Matrix determinant is 0\n";
-        return *this;
+        return {};
     }
 
     return Adjugate() * (1.f / det);

@@ -14,7 +14,7 @@ public:
     
     void Load(const char* path);
     void Set(unsigned int uniformIdx, unsigned int textureIdx);
-    void UnSet(unsigned int textureIdx);
+    void Unset(unsigned int textureIdx);
 
 protected:
     unsigned int Width;

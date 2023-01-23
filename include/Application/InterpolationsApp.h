@@ -9,7 +9,7 @@ struct Quat;
 struct Vec3;
 class DebugDrawer;
 
-class TrackTestApp : public Application
+class InterpolationsApp : public Application
 {
 public:
     void Initialize() override;
@@ -35,4 +35,4 @@ private:
     static VectorTrack MakeVectorTrack(Interpolation interp, int numFrames, ...);
     static QuaternionTrack MakeQuaternionTrack(Interpolation interp, int numFrames, ...);
 
-}; // TrackTestApp
+}; // InterpolationsApp

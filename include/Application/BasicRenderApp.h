@@ -10,7 +10,7 @@ template<typename T> struct TVec2;
 typedef TVec2<float> Vec2;
 template<typename T> class Attribute;
 
-class RenderTestApp : public Application
+class BasicRenderApp : public Application
 {
 public:
     void Initialize() override;
@@ -27,4 +27,4 @@ protected:
     Texture* m_DisplayTexture = nullptr;
     float m_Rotation = 0.f;
     
-}; // RenderTestApp
+}; // BasicRenderApp

@@ -3,16 +3,15 @@
 #include <string>
 
 #include "Application.h"
-#include "SkeletalMesh/Pose.h"
 #include "SkeletalMesh/Skeleton.h"
 
 class Clip;
 class DebugDrawer;
 
-class AnimationTestApp : public Application
+class SkeletalAnimationApp : public Application
 {
 public:
-    AnimationTestApp();
+    SkeletalAnimationApp();
     
     void Initialize() override;
     void Update(float deltaTime) override;
@@ -35,5 +34,6 @@ protected:
     
     void SwapAnimation(const std::string& clipName);
     void SwapAnimation(unsigned int idx);
+    void NextAnimation();
     
-}; // AnimationTestApp
+}; // SkeletalAnimationApp

@@ -211,7 +211,7 @@ void SkeletalMesh::CPUSkin(const Skeleton& skeleton, const Pose& pose)
 
     for (unsigned int i = 0; i < numVerts; ++i)
     {
-        Mat4 skinMatrix;
+        Mat4 skinMatrix = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         for (unsigned int j = 0; j < 4; ++j)
         {
             int boneID = m_BonesID[i][j];

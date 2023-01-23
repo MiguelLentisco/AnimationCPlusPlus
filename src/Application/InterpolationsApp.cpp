@@ -1,4 +1,4 @@
-﻿#include "Application/TrackTestApp.h"
+﻿#include "Application/InterpolationsApp.h"
 
 #include <cstdarg>
 
@@ -10,7 +10,7 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void TrackTestApp::Initialize()
+void InterpolationsApp::Initialize()
 {
     Application::Initialize();
 
@@ -159,7 +159,7 @@ void TrackTestApp::Initialize()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void TrackTestApp::Render(float inAspectRatio)
+void InterpolationsApp::Render(float inAspectRatio)
 {
     Application::Render(inAspectRatio);
 
@@ -177,7 +177,7 @@ void TrackTestApp::Render(float inAspectRatio)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void TrackTestApp::Shutdown()
+void InterpolationsApp::Shutdown()
 {
 	m_ScalarTracks.clear();
 	m_ScalarTracksLooping.clear();
@@ -193,7 +193,7 @@ void TrackTestApp::Shutdown()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-ScalarFrame TrackTestApp::MakeFrame(float time, float value)
+ScalarFrame InterpolationsApp::MakeFrame(float time, float value)
 {
 	return MakeFrame(time, 0.0f, value, 0.0f);
 	
@@ -201,7 +201,7 @@ ScalarFrame TrackTestApp::MakeFrame(float time, float value)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-ScalarFrame TrackTestApp::MakeFrame(float time, float in, float value, float out)
+ScalarFrame InterpolationsApp::MakeFrame(float time, float in, float value, float out)
 {
 	ScalarFrame result;
 	result.m_Time = time;
@@ -214,7 +214,7 @@ ScalarFrame TrackTestApp::MakeFrame(float time, float in, float value, float out
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-VectorFrame TrackTestApp::MakeFrame(float time, const Vec3& value)
+VectorFrame InterpolationsApp::MakeFrame(float time, const Vec3& value)
 {
 	return MakeFrame(time, {}, value, {});
 	
@@ -222,7 +222,7 @@ VectorFrame TrackTestApp::MakeFrame(float time, const Vec3& value)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-VectorFrame TrackTestApp::MakeFrame(float time, const Vec3& in, const Vec3& value, const Vec3& out)
+VectorFrame InterpolationsApp::MakeFrame(float time, const Vec3& in, const Vec3& value, const Vec3& out)
 {
 	VectorFrame result;
 	result.m_Time = time;
@@ -241,7 +241,7 @@ VectorFrame TrackTestApp::MakeFrame(float time, const Vec3& in, const Vec3& valu
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-QuaternionFrame TrackTestApp::MakeFrame(float time, const Quat& value) 
+QuaternionFrame InterpolationsApp::MakeFrame(float time, const Quat& value) 
 {
 	return MakeFrame(time, Quat(0, 0, 0, 0), value, Quat(0, 0, 0, 0));
 	
@@ -249,7 +249,7 @@ QuaternionFrame TrackTestApp::MakeFrame(float time, const Quat& value)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-QuaternionFrame TrackTestApp::MakeFrame(float time, const Quat& in, const Quat& out, const Quat& value)
+QuaternionFrame InterpolationsApp::MakeFrame(float time, const Quat& in, const Quat& out, const Quat& value)
 {
 	QuaternionFrame result;
 	result.m_Time = time;
@@ -271,7 +271,7 @@ QuaternionFrame TrackTestApp::MakeFrame(float time, const Quat& in, const Quat& 
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-ScalarTrack TrackTestApp::MakeScalarTrack(Interpolation interp, int numFrames, ...)
+ScalarTrack InterpolationsApp::MakeScalarTrack(Interpolation interp, int numFrames, ...)
 {
 	ScalarTrack result;
 	result.SetInterpolation(interp);
@@ -293,7 +293,7 @@ ScalarTrack TrackTestApp::MakeScalarTrack(Interpolation interp, int numFrames, .
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-VectorTrack TrackTestApp::MakeVectorTrack(Interpolation interp, int numFrames, ...)
+VectorTrack InterpolationsApp::MakeVectorTrack(Interpolation interp, int numFrames, ...)
 {
 	VectorTrack result;
 	result.SetInterpolation(interp);
@@ -315,7 +315,7 @@ VectorTrack TrackTestApp::MakeVectorTrack(Interpolation interp, int numFrames, .
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-QuaternionTrack TrackTestApp::MakeQuaternionTrack(Interpolation interp, int numFrames, ...)
+QuaternionTrack InterpolationsApp::MakeQuaternionTrack(Interpolation interp, int numFrames, ...)
 {
 	QuaternionTrack result;
 	result.SetInterpolation(interp);

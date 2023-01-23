@@ -1,4 +1,4 @@
-﻿#include "Application/RenderTestApp.h"
+﻿#include "Application/BasicRenderApp.h"
 
 #include "Core/Mat4.h"
 #include "Core/Quat.h"
@@ -14,7 +14,7 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void RenderTestApp::Initialize()
+void BasicRenderApp::Initialize()
 {
     Application::Initialize();
 	
@@ -57,7 +57,7 @@ void RenderTestApp::Initialize()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void RenderTestApp::Update(float inDeltaTime)
+void BasicRenderApp::Update(float inDeltaTime)
 {
     Application::Update(inDeltaTime);
 
@@ -71,7 +71,7 @@ void RenderTestApp::Update(float inDeltaTime)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void RenderTestApp::Render(float inAspectRatio)
+void BasicRenderApp::Render(float inAspectRatio)
 {
     Application::Render(inAspectRatio);
 
@@ -95,7 +95,7 @@ void RenderTestApp::Render(float inAspectRatio)
 
 	DrawLibrary::Draw(*m_IndexBuffer, DrawMode::Triangles);
 
-	m_DisplayTexture->UnSet(0);
+	m_DisplayTexture->Unset(0);
 
 	m_VertexPositions->UnbindFrom(m_Shader->GetAttribute("position"));
 	m_VertexNormals->UnbindFrom(m_Shader->GetAttribute("normal"));
@@ -107,7 +107,7 @@ void RenderTestApp::Render(float inAspectRatio)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void RenderTestApp::Shutdown()
+void BasicRenderApp::Shutdown()
 {
 	delete m_Shader;
 	delete m_DisplayTexture;
