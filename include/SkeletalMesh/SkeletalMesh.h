@@ -23,11 +23,17 @@ public:
     ~SkeletalMesh();
 
     const std::vector<Vec3>& GetPosition() const { return m_Position; }
+    std::vector<Vec3>& GetPosition() { return m_Position; }
     const std::vector<Vec3>& GetNormal() const { return m_Normal; }
+    std::vector<Vec3>& GetNormal() { return m_Normal; }
     const std::vector<Vec2>& GetTexCoord() const { return m_TexCoords; }
+    std::vector<Vec2>& GetTexCoord() { return m_TexCoords; }
     const std::vector<Vec4>& GetBonesWeight() const { return m_BonesWeight; }
+    std::vector<Vec4>& GetBonesWeight() { return m_BonesWeight; }
     const std::vector<IVec4>& GetBonesID() const { return m_BonesID; }
+    std::vector<IVec4>& GetBonesID() { return m_BonesID; }
     const std::vector<unsigned int>& GetIndices() const { return m_Indices; }
+    std::vector<unsigned int>& GetIndices() { return m_Indices; }
     
     void UpdateOpenGLBuffers(); // Sync with GPU
     void Bind(int position, int normal, int texCoord, int boneWeight, int boneID);

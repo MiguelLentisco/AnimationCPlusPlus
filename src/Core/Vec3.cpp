@@ -285,7 +285,7 @@ float Vec3::DistSq(const Vec3& v) const
 void Vec3::Normalize()
 {
     const float lenSq = LenSq();
-    if (Utils::IsZero(lenSq))
+    if (Utils::IsZero(lenSq) || Utils::AreEqual(lenSq, 1.f))
     {
         return;
     }
@@ -302,7 +302,7 @@ void Vec3::Normalize()
 Vec3 Vec3::Normalized() const
 {
     const float lenSq = LenSq();
-    if (Utils::IsZero(lenSq))
+    if (Utils::IsZero(lenSq) || Utils::AreEqual(lenSq, 1.f))
     {
         return *this;
     }

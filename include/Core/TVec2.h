@@ -7,7 +7,7 @@ struct TVec2
     T y;
     
     TVec2(T x = 0, T y = 0) : x(x), y(y) {}
-    TVec2(T* v[2]) : x(v[0]), y(v[1]) {}
+    TVec2(const T v[2]) : x(v[0]), y(v[1]) {}
     
 }; // TVec2
 

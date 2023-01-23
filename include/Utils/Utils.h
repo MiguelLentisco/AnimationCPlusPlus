@@ -20,6 +20,8 @@ public:
         return std::max(lower, std::min(n, upper));
     
     } // Clamp
+
+    static int FloatToInt(float f);
     
 }; // Utils
 

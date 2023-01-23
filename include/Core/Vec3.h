@@ -8,7 +8,7 @@ struct Vec3
     float z;
     
     Vec3(float x = 0.f, float y = 0.f, float z = 0.f) : x(x), y(y), z(z) {}
-    Vec3(const float* v) : x(v[0]), y(v[1]), z(v[2]) {}
+    Vec3(const float v[3]) : x(v[0]), y(v[1]), z(v[2]) {}
 
     float& operator[](int i);
     const float& operator[](int i) const;

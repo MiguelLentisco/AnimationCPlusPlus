@@ -1975,6 +1975,7 @@
     <Content Include="Assets\Woman.gltf" />
     <Content Include="Assets\Woman.png" />
     <Content Include="Shaders\lit.frag" />
+    <Content Include="Shaders\skinned.vert" />
     <Content Include="Shaders\static.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

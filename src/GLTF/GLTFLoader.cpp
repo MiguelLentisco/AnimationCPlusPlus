@@ -10,9 +10,12 @@
 #include "Animation/TransformTrack.h"
 #include "Core/Mat4.h"
 #include "Core/Transform.h"
+#include "Core/TVec2.h"
 #include "GLTF/cgltf.h"
 #include "SkeletalMesh/Pose.h"
+#include "SkeletalMesh/SkeletalMesh.h"
 #include "SkeletalMesh/Skeleton.h"
+#include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -158,6 +161,56 @@ Skeleton GLTFLoader::LoadSkeleton(const cgltf_data* data)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+std::vector<SkeletalMesh> GLTFLoader::LoadMeshes(const cgltf_data* data)
+{
+    std::vector<SkeletalMesh> result;
+    const cgltf_node* nodes = data->nodes;
+    const unsigned int nodeCount = data->nodes_count;
+
+    for (unsigned int i = 0; i < nodeCount; ++i)
+    {
+        const cgltf_node& node = nodes[i];
+        if (node.mesh == nullptr || node.skin == nullptr)
+        {
+            continue;
+        }
+
+        const unsigned int numPrimitives = node.mesh->primitives_count;
+        for (unsigned int j = 0; j < numPrimitives; ++j)
+        {
+            result.emplace_back();
+            SkeletalMesh& skeletalMesh = result[result.size() - 1];
+            
+            const cgltf_primitive& primitive = node.mesh->primitives[j];
+            const unsigned int attributesCount = primitive.attributes_count;
+            for (unsigned int k = 0; k < attributesCount; ++k)
+            {
+                const cgltf_attribute& attribute = primitive.attributes[k];
+                MeshFromAttribute(skeletalMesh, attribute, node.skin, nodes, nodeCount);
+            }
+
+            if (primitive.indices != nullptr)
+            {
+                const unsigned int indicesCount = primitive.indices->count;
+                std::vector<unsigned int>& indices = skeletalMesh.GetIndices();
+                indices.resize(indicesCount);
+            
+                for (unsigned int k = 0; k < indicesCount; ++k)
+                {
+                    indices[k] = cgltf_accessor_read_index(primitive.indices, k);
+                } 
+            }
+
+            skeletalMesh.UpdateOpenGLBuffers();
+        }
+    }
+
+    return result;
+    
+} // LoadMeshes
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 std::vector<Clip> GLTFLoader::LoadAnimationClips(const cgltf_data* data)
 {
     const unsigned int numClips = data->animations_count;
@@ -262,6 +315,76 @@ void GLTFLoader::GetScalarValues(std::vector<float>& out, unsigned int compCount
     }
     
 } // GetScalarValues
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void GLTFLoader::MeshFromAttribute(SkeletalMesh& outMesh, const cgltf_attribute& attribute, const cgltf_skin* skin,
+    const cgltf_node* nodes, unsigned nodeCount)
+{
+    const cgltf_accessor& accessor = *attribute.data;
+
+    // Find how many attributes has
+    unsigned int componentCount;
+    switch (accessor.type)
+    {
+        case cgltf_type_vec2:
+            componentCount = 2;
+        break;
+        case cgltf_type_vec3:
+            componentCount = 3;
+            break;
+        case cgltf_type_vec4:
+            componentCount = 4;
+            break;
+        default:
+            componentCount = 0;
+    }
+
+    // Load values
+    std::vector<float> values;
+    GetScalarValues(values, componentCount, accessor);
+
+    // Fill appropriate data with the attribute data
+    const unsigned int accessorCount = accessor.count;
+    for (unsigned int i = 0; i < accessorCount; ++i)
+    {
+        const float* attributeValue = &values[i * componentCount];
+        switch (attribute.type)
+        {
+            case cgltf_attribute_type_position:
+                outMesh.GetPosition().emplace_back(Vec3{attributeValue});
+                break;
+            case cgltf_attribute_type_texcoord:
+                outMesh.GetTexCoord().emplace_back(Vec2{attributeValue});
+                break;
+            case cgltf_attribute_type_weights:
+                outMesh.GetBonesWeight().emplace_back(Vec4{attributeValue});
+                break;
+            case cgltf_attribute_type_normal:
+            {
+                const Vec3 normal = Vec3{attributeValue}.Normalized();
+                outMesh.GetNormal().emplace_back(normal.IsZeroVec() ? Vec3{0.f, 1.f, 0.f} : normal);
+                break;  
+            }
+            case cgltf_attribute_type_joints:
+            {
+                IVec4 bonesID;
+                // Replace node ID to skeleton hierarchy boneID
+                for (unsigned int j = 0; j < 4; ++j)
+                {
+                    const int nodeID = Utils::FloatToInt(*(attributeValue + j));
+                    const int boneID = GetNodeIndex(skin->joints[nodeID], nodes, nodeCount);
+                    bonesID[j] = std::max(0, boneID);
+                }
+                outMesh.GetBonesID().emplace_back(bonesID);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    
+} // MeshFromAttribute
 
 // ---------------------------------------------------------------------------------------------------------------------
 
