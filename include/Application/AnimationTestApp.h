@@ -4,6 +4,7 @@
 
 #include "Application.h"
 #include "SkeletalMesh/Pose.h"
+#include "SkeletalMesh/Skeleton.h"
 
 class Clip;
 class DebugDrawer;
@@ -23,13 +24,14 @@ protected:
     int m_CurrentClip = 0;
     float m_PlaybackTime = 0.f;
 
-    Pose m_RestPose;
+    Skeleton m_Skeleton;
     Pose m_CurrentPose;
     
     DebugDrawer* m_RestPoseVisual = nullptr;
+    DebugDrawer* m_BindPoseVisual = nullptr;
     DebugDrawer* m_CurrentPoseVisual = nullptr;
 
-    bool bShowBasePose = false;
+    bool bShowBasePoses = false;
     
     void SwapAnimation(const std::string& clipName);
     void SwapAnimation(unsigned int idx);

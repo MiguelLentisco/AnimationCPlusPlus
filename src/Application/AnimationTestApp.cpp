@@ -17,15 +17,19 @@ AnimationTestApp::AnimationTestApp() : Application()
 
 void AnimationTestApp::Initialize()
 {
-    cgltf_data* gltf = GLTFLoader::LoadGLTFFile("Assets/Woman.gltf");
-    
-    m_RestPose = GLTFLoader::LoadRestPose(gltf);
-    m_Clips = GLTFLoader::LoadAnimationClips(gltf);
-    GLTFLoader::FreeGLTFFile(gltf);
+    cgltf_data* gltf_data = GLTFLoader::LoadGLTFFile("Assets/Woman.gltf");
+
+    m_Skeleton = GLTFLoader::LoadSkeleton(gltf_data);
+    m_Clips = GLTFLoader::LoadAnimationClips(gltf_data);
+    GLTFLoader::FreeGLTFFile(gltf_data);
 
     m_RestPoseVisual = new DebugDrawer();
-    m_RestPoseVisual->FromPose(m_RestPose);
+    m_RestPoseVisual->FromPose(m_Skeleton.GetRestPose());
     m_RestPoseVisual->UpdateOpenGLBuffers();
+
+    m_BindPoseVisual = new DebugDrawer();
+    m_BindPoseVisual->FromPose(m_Skeleton.GetBindPose());
+    m_BindPoseVisual->UpdateOpenGLBuffers();
     
     // Running, Jump2, PickUp, SitIdle, Idle, Punch, Sitting, Walking, Jump, Lean_Left
     static constexpr int FIRST_ANIM_IDX = 0;
@@ -35,7 +39,7 @@ void AnimationTestApp::Initialize()
     m_CurrentPoseVisual->FromPose(m_CurrentPose);
     m_CurrentPoseVisual->UpdateOpenGLBuffers();
 
-    bShowBasePose = false;
+    bShowBasePoses = true;
     
 } // Initialize
 
@@ -76,12 +80,13 @@ void AnimationTestApp::Update(float deltaTime)
 void AnimationTestApp::Render(float inAspectRatio)
 {
     const Mat4 projection = Mat4::CreatePerspective(60.0f, inAspectRatio, 0.01f, 1000.0f);
-    static const Mat4 VIEW = Mat4::CreateLookAt({0, 4, 7}, {0, 4, 0}, {0, 1, 0});
+    static const Mat4 VIEW = Mat4::CreateLookAt({0, 4, -7}, {0, 4, 0}, {0, 1, 0});
     const Mat4 mvp = projection * VIEW; // No model
 
-    if (bShowBasePose)
+    if (bShowBasePoses)
     {
         m_RestPoseVisual->Draw(DebugDrawMode::Lines, {1, 0, 0}, mvp);
+        m_BindPoseVisual->Draw(DebugDrawMode::Lines, {0, 1, 0}, mvp);
     }
     
     m_CurrentPoseVisual->UpdateOpenGLBuffers();
@@ -117,7 +122,7 @@ void AnimationTestApp::SwapAnimation(const std::string& clipName)
     
     // Reset base pose
     m_PlaybackTime = 0.f;
-    m_CurrentPose = m_RestPose;
+    m_CurrentPose = m_Skeleton.GetRestPose();
     
 } // SwapAnimation
 
