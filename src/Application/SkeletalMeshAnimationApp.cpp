@@ -1,6 +1,8 @@
 ﻿#include "Application/SkeletalMeshAnimationApp.h"
 
 #include "Animation/Clip.h"
+#include "Animation/FastTrack.h"
+#include "Animation/TransformTrack.h"
 #include "Core/Mat4.h"
 #include "GLTF/GLTFLoader.h"
 #include "Render/Shader.h"
@@ -12,25 +14,20 @@
 
 void AnimationInstance::Update(float deltaTime)
 {
-	if (m_CurrentClip < 0)
-	{
-		return;
-	}
-    
-	m_PlaybackTime += deltaTime;
-    
-	const Clip& currentClip = (*m_Clips)[m_CurrentClip];
-	const float clipEndTime = currentClip.GetEndTime();
-	if (m_PlaybackTime >= clipEndTime)
-	{
-		const float diff = m_PlaybackTime - clipEndTime;
-		NextAnimation();
-		m_PlaybackTime = diff;
-	}
+	UpdateAnimation(deltaTime);
 	
-	m_PlaybackTime = currentClip.Sample(m_AnimatedPose, m_PlaybackTime);
+	// Merge pose palette with inverse bind pose
+	m_AnimatedPose.GetMatrixPalette(m_PosePalette);
+	const std::vector<Mat4>& invBindPose = m_Skeleton->GetInvBindPose();
+	
+	const unsigned int numBones = m_PosePalette.size();
+	for (unsigned int i = 0; i < numBones; ++i)
+	{
+		m_PosePalette[i] *= invBindPose[i];
+	}
 	
 } // Update
+
 // ---------------------------------------------------------------------------------------------------------------------
 
 void AnimationInstance::SwapAnimation(const std::string& clipName)
@@ -73,6 +70,30 @@ void AnimationInstance::NextAnimation()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+void AnimationInstance::UpdateAnimation(float deltaTime)
+{
+	if (m_CurrentClip < 0)
+	{
+		return;
+	}
+    
+	m_PlaybackTime += m_PlaybackSpeed * deltaTime;
+    
+	const FastClip& currentClip = (*m_Clips)[m_CurrentClip];
+	const float clipEndTime = currentClip.GetEndTime();
+	if (!bLoop && m_PlaybackTime >= clipEndTime)
+	{
+		const float diff = m_PlaybackTime - clipEndTime;
+		NextAnimation();
+		m_PlaybackTime = diff;
+	}
+	
+	m_PlaybackTime = currentClip.Sample(m_AnimatedPose, m_PlaybackTime);
+	
+} // UpdateAnimation
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 SkeletalMeshAnimationApp::SkeletalMeshAnimationApp() : Application()
 {
     
@@ -87,8 +108,13 @@ void SkeletalMeshAnimationApp::Initialize()
     cgltf_data* gltf_data = GLTFLoader::LoadGLTFFile("Assets/Woman.gltf");
     m_CPUMeshes = GLTFLoader::LoadMeshes(gltf_data);
     m_Skeleton = GLTFLoader::LoadSkeleton(gltf_data);
-    m_Clips = GLTFLoader::LoadAnimationClips(gltf_data);
-    GLTFLoader::FreeGLTFFile(gltf_data);
+    const std::vector<Clip> clips = GLTFLoader::LoadAnimationClips(gltf_data);
+	GLTFLoader::FreeGLTFFile(gltf_data);
+	
+	for (const Clip& clip : clips)
+	{
+		m_Clips.emplace_back(ClipUtilities::OptimizeClip(clip));
+	}
 
     m_GPUMeshes = m_CPUMeshes;
     const unsigned int numMeshes = m_GPUMeshes.size();
@@ -98,7 +124,7 @@ void SkeletalMeshAnimationApp::Initialize()
     }
 
     m_StaticShader = new Shader("Shaders/static.vert", "Shaders/lit.frag");
-    m_SkinnedShader = new Shader("Shaders/skinned.vert", "Shaders/lit.frag");
+    m_SkinnedShader = new Shader("Shaders/preskinned.vert", "Shaders/lit.frag");
     m_DiffuseTexture = new Texture("Assets/Woman.png");
 	
     m_GPUAnimInfo.m_AnimatedPose = m_Skeleton.GetRestPose();
@@ -133,10 +159,8 @@ void SkeletalMeshAnimationApp::Update(float deltaTime)
 	const unsigned int numCPUMeshes = m_CPUMeshes.size();
     for (unsigned int i = 0; i < numCPUMeshes; ++i)
     {
-        m_CPUMeshes[i].CPUSkin(m_Skeleton, m_CPUAnimInfo.m_AnimatedPose);
+        m_CPUMeshes[i].CPUSkin(m_CPUAnimInfo.m_PosePalette);
     }
-
-    m_GPUAnimInfo.m_AnimatedPose.GetMatrixPalette(m_GPUAnimInfo.m_PosePalette);
     
 } // Update
 
@@ -169,7 +193,7 @@ void SkeletalMeshAnimationApp::Render(float inAspectRatio)
 	
 	m_DiffuseTexture->Unset(0);
 	m_StaticShader->Unbind();
-
+	
 	// GPU Skinned Mesh
 	m_SkinnedShader->Bind();
 	Uniform<Mat4>::Set(m_SkinnedShader->GetUniform("model"), m_GPUAnimInfo.m_Model.ToMat4());
@@ -178,8 +202,7 @@ void SkeletalMeshAnimationApp::Render(float inAspectRatio)
 	Uniform<Vec3>::Set(m_SkinnedShader->GetUniform("light"), Vec3{1, 1, 1});
 	m_DiffuseTexture->Set(m_SkinnedShader->GetUniform("tex0"), 0);
 	
-	Uniform<Mat4>::Set(m_SkinnedShader->GetUniform("pose"), m_GPUAnimInfo.m_PosePalette);
-	Uniform<Mat4>::Set(m_SkinnedShader->GetUniform("invBindPose"), m_Skeleton.GetInvBindPose());
+	Uniform<Mat4>::Set(m_SkinnedShader->GetUniform("animated"), m_GPUAnimInfo.m_PosePalette);
 
 	const unsigned int numGPUMeshes = m_GPUMeshes.size();
 	for (unsigned int i = 0; i < numGPUMeshes; ++i)

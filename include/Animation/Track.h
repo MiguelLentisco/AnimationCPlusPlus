@@ -3,9 +3,6 @@
 #include <vector>
 
 template <unsigned int N> class Frame;
-typedef Frame<1> ScalarFrame;
-typedef Frame<3> VectorFrame;
-typedef Frame<4> QuaternionFrame;
 
 enum class Interpolation;
 struct Vec3;
@@ -18,10 +15,11 @@ public:
     Track();
     Track(const Track& other);
     Track& operator=(const Track& other);
-    ~Track();
+    virtual ~Track();
     
     unsigned int GetSize() const;
     Interpolation GetInterpolation() const;
+    const std::vector<Frame<N>>& GetFrames() const;
     
     void SetInterpolation(Interpolation interpolation);
     void Resize(unsigned int size);
@@ -46,7 +44,7 @@ protected:
     T SampleCubic(float t, bool looping) const;
     static T Hermite(float t, const T& p1, const T& s1, const T& p2, const T& s2);
 
-    int FrameIndex(float t, bool looping) const;
+    virtual int FrameIndex(float t, bool looping) const;
     float AdjustTimeToFitTrack(float t, bool looping) const;
 
     static T Cast(const float* value); // Will be specialized

@@ -1,8 +1,9 @@
 ﻿#include "Render/Draw.h"
 
-#include "Render/IndexBuffer.h"
-#include "glad/glad.h"
 #include <iostream>
+
+#include "glad/glad.h"
+#include "Render/IndexBuffer.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 

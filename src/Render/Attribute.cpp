@@ -1,8 +1,8 @@
 ﻿#include "Render/Attribute.h"
 
 #include "Core/TVec2.h"
-#include "Core/Vec3.h"
 #include "Core/TVec4.h"
+#include "Core/Vec3.h"
 #include "glad/glad.h"
 
 // ---------------------------------------------------------------------------------------------------------------------

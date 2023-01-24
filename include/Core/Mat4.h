@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <ostream>
-#include <vector>
 
 #include "Core/TVec4.h"
 
@@ -77,6 +76,7 @@ struct Mat4
     Mat4 operator*(const Vec4& v) const;
 
     Mat4& operator+=(const Mat4& m);
+    Mat4& operator*=(const Mat4& m);
 
     friend std::ostream& operator<<(std::ostream& os, const Mat4& m);
 

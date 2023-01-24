@@ -43,6 +43,7 @@ public:
     void DrawInstanced(unsigned int numInstances);
 
     void CPUSkin(const Skeleton& skeleton, const Pose& pose);
+    void CPUSkin(const std::vector<Mat4>& animatedPose);
 
 protected:
     std::vector<Vec3> m_Position;

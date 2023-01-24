@@ -21,6 +21,13 @@ public:
     
     } // Clamp
 
+    template <typename T>
+    static T Lerp(const T& start, const T& end, float alpha)
+    {
+        return start * (1.f - alpha) + end * alpha;
+    
+    } // Clamp
+
     static int FloatToInt(float f);
     
 }; // Utils

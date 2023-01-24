@@ -3,11 +3,20 @@
 #include <vector>
 
 #include "Application.h"
-#include "Animation/Track.h"
 
+enum class Interpolation;
 struct Quat;
 struct Vec3;
 class DebugDrawer;
+
+template <unsigned int N> class Frame;
+typedef Frame<1> ScalarFrame;
+typedef Frame<3> VectorFrame;
+typedef Frame<4> QuaternionFrame;
+template <typename T, unsigned int N> class Track;
+typedef Track<float, 1> ScalarTrack;
+typedef Track<Vec3, 3> VectorTrack;
+typedef Track<Quat, 4> QuaternionTrack;
 
 class InterpolationsApp : public Application
 {

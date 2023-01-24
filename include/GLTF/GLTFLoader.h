@@ -13,7 +13,12 @@ struct Transform;
 class Pose;
 class Skeleton;
 class SkeletalMesh;
-class Clip;
+struct Vec3;
+struct Quat;
+template<typename T, unsigned int N> class Track;
+template<typename VTRACK, typename QTRACK> class TTransformTrack;
+template<typename TRACK> class TClip;
+typedef TClip<TTransformTrack<Track<Vec3, 3>, Track<Quat, 4>>> Clip;
 template<typename T, unsigned int N> class Track;
 
 class GLTFLoader

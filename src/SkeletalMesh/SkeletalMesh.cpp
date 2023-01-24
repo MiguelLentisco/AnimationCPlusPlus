@@ -229,4 +229,37 @@ void SkeletalMesh::CPUSkin(const Skeleton& skeleton, const Pose& pose)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+void SkeletalMesh::CPUSkin(const std::vector<Mat4>& animatedPose)
+{
+    const unsigned int numVerts = m_Position.size();
+    if (numVerts == 0)
+    {
+        return;
+    }
+
+    m_SkinnedPosition.resize(numVerts);
+    m_SkinnedNormal.resize(numVerts);
+
+    for (unsigned int i = 0; i < numVerts; ++i)
+    {
+        m_SkinnedPosition[i] = {0, 0, 0};
+        m_SkinnedNormal[i] = {0, 0, 0};
+        
+        for (unsigned int j = 0; j < 4; ++j)
+        {
+            const Mat4& animatedPoseMatrix = animatedPose[m_BonesID[i][j]];
+            const float boneWeight = m_BonesWeight[i][j];
+            
+            m_SkinnedPosition[i] += animatedPoseMatrix.TransformPoint(m_Position[i]) * boneWeight;
+            m_SkinnedNormal[i] += animatedPoseMatrix.TransformVector(m_Normal[i]) * boneWeight;
+        }
+    }
+    
+    m_PositionAttribute->Set(m_SkinnedPosition);
+    m_NormalAttribute->Set(m_SkinnedNormal);
+    
+} // CPUSkin
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 

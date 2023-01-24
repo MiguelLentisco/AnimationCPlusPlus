@@ -5,7 +5,12 @@
 #include "Application.h"
 #include "SkeletalMesh/Skeleton.h"
 
-class Clip;
+struct Vec3;
+struct Quat;
+template<typename T, unsigned int N> class Track;
+template<typename VTRACK, typename QTRACK> class TTransformTrack;
+template<typename TRACK> class TClip;
+typedef TClip<TTransformTrack<Track<Vec3, 3>, Track<Quat, 4>>> Clip;
 class DebugDrawer;
 
 class SkeletalAnimationApp : public Application

@@ -6,9 +6,9 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-template Track<float, 1>;
-template Track<Vec3, 3>;
-template Track<Quat, 4>;
+template ScalarTrack;
+template VectorTrack;
+template QuaternionTrack;
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -85,6 +85,15 @@ Interpolation Track<T, N>::GetInterpolation() const
     return m_Interpolation;
     
 } // GetInterpolation
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+template <typename T, unsigned N>
+const std::vector<Frame<N>>& Track<T, N>::GetFrames() const
+{
+    return m_Frames;
+    
+} // GetFrames
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -294,7 +303,6 @@ template <typename T, unsigned N>
 int Track<T, N>::FrameIndex(float t, bool looping) const
 {
     const unsigned int size = GetSize();
-    
     if (size <= 1)
     {
         return -1;
@@ -322,7 +330,7 @@ int Track<T, N>::FrameIndex(float t, bool looping) const
     }
     
     // Search the frame closest to the time (but still less)
-    for (int i = lastIdx - 1; i >= 0; --i)
+    for (unsigned int i = lastIdx - 1; i > 0; --i)
     {
         if (t >= m_Frames[i].m_Time)
         {
@@ -330,7 +338,7 @@ int Track<T, N>::FrameIndex(float t, bool looping) const
         }
     }
 
-    return -1; // Invalid
+    return 0; // Invalid
     
 } // FrameIndex
 

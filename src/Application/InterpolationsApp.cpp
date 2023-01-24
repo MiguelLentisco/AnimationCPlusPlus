@@ -2,8 +2,9 @@
 
 #include <cstdarg>
 
-#include "Animation/Interpolation.h"
 #include "Animation/Frame.h"
+#include "Animation/Interpolation.h"
+#include "Animation/Track.h"
 #include "Core/Mat4.h"
 #include "Core/Quat.h"
 #include "Render/DebugDrawer.h"

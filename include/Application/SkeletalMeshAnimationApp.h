@@ -7,7 +7,10 @@
 class SkeletalMesh;
 class Shader;
 class Texture;
-class Clip;
+template<typename T, unsigned int N> class FastTrack;
+template<typename VTRACK, typename QTRACK> class TTransformTrack;
+template<typename TRACK> class TClip;
+typedef TClip<TTransformTrack<FastTrack<Vec3, 3>, FastTrack<Quat, 4>>> FastClip;
 
 struct AnimationInstance
 {
@@ -15,9 +18,11 @@ struct AnimationInstance
     Pose m_AnimatedPose;
     std::vector<Mat4> m_PosePalette;
 
-    std::vector<Clip>* m_Clips = nullptr;
+    std::vector<FastClip>* m_Clips = nullptr;
     int m_CurrentClip = 0;
-    float m_PlaybackTime = 0.f;
+    float m_PlaybackTime = .0f;
+    float m_PlaybackSpeed = 1.f;
+    bool bLoop = true;
     
     Transform m_Model;
 
@@ -25,6 +30,9 @@ struct AnimationInstance
     void SwapAnimation(const std::string& clipName);
     void SwapAnimation(unsigned int idx);
     void NextAnimation();
+
+private:
+    void UpdateAnimation(float deltaTime);
     
 }; // AnimationInstance
 
@@ -47,7 +55,7 @@ protected:
     Shader* m_StaticShader = nullptr;
     Shader* m_SkinnedShader = nullptr;
     
-    std::vector<Clip> m_Clips;
+    std::vector<FastClip> m_Clips;
     AnimationInstance m_GPUAnimInfo;
     AnimationInstance m_CPUAnimInfo;
     

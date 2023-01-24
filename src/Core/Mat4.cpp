@@ -1,10 +1,11 @@
 ﻿#include "Core/Mat4.h"
 
+#include <iostream>
+#include <stdexcept>
+#include <utility>
+
 #include "Core/Vec3.h"
 #include "Utils/Utils.h"
-#include <iostream>
-#include <utility>
-#include <stdexcept>
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -149,6 +150,17 @@ Mat4& Mat4::operator+=(const Mat4& m)
     return *this;
     
 } // operator+=
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+Mat4& Mat4::operator*=(const Mat4& m)
+{
+    const Mat4 res = *this * m;
+    *this = res;
+
+    return *this;
+    
+} // operator*=
 
 // ---------------------------------------------------------------------------------------------------------------------
 
