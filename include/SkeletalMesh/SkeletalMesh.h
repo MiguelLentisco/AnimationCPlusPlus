@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <map>
 #include <vector>
 
 class Pose;
@@ -13,6 +14,7 @@ typedef TVec4<float> Vec4;
 template <typename T> struct TVec2;
 typedef TVec2<float> Vec2;
 class IndexBuffer;
+typedef std::map<int, int> BoneMap;
 
 class SkeletalMesh
 {
@@ -44,6 +46,8 @@ public:
 
     void CPUSkin(const Skeleton& skeleton, const Pose& pose);
     void CPUSkin(const std::vector<Mat4>& animatedPose);
+
+    void RearrangeMesh(const BoneMap& boneMap);
 
 protected:
     std::vector<Vec3> m_Position;

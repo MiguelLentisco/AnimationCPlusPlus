@@ -1,9 +1,12 @@
 ﻿#pragma once
 
+#include <map>
 #include <vector>
 #include <string>
 
 #include "Pose.h"
+
+typedef std::map<int, int> BoneMap;
 
 class Skeleton
 {
@@ -18,6 +21,7 @@ public:
     const std::string& GetJointName(unsigned int idx) const;
 
     void Set(const Pose& rest, const Pose& bind, const std::vector<std::string>& names);
+    BoneMap RearrangeSkeleton();
     
 protected:
     Pose m_RestPose;

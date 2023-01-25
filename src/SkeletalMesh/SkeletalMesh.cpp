@@ -262,4 +262,20 @@ void SkeletalMesh::CPUSkin(const std::vector<Mat4>& animatedPose)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+void SkeletalMesh::RearrangeMesh(const BoneMap& boneMap)
+{
+    for (IVec4& bonesID : m_BonesID)
+    {
+        for (unsigned int i = 0; i < 4; ++i)
+        {
+            bonesID[i] = boneMap.at(bonesID[i]);
+        }
+    }
+
+    UpdateOpenGLBuffers();
+    
+} // RearrangeMesh
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 

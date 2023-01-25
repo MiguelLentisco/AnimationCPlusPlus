@@ -224,6 +224,18 @@ const TRACK& TClip<TRACK>::operator[](unsigned id) const
 // ---------------------------------------------------------------------------------------------------------------------
 
 template <typename TRACK>
+void TClip<TRACK>::RearrangeClip(const BoneMap& boneMap)
+{
+    for (TRACK& track : m_Tracks)
+    {
+       track.SetID(static_cast<unsigned int>(boneMap.at(static_cast<int>(track.GetID()))));
+    }
+
+} // RearrangeClip
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+template <typename TRACK>
 float TClip<TRACK>::AdjustTimeToFitRange(float t) const
 {
     const float duration = GetDuration();

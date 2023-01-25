@@ -111,18 +111,25 @@ void SkeletalMeshAnimationApp::Initialize()
     m_Skeleton = GLTFLoader::LoadSkeleton(gltf_data);
     const std::vector<Clip> clips = GLTFLoader::LoadAnimationClips(gltf_data);
 	GLTFLoader::FreeGLTFFile(gltf_data);
+
+	const BoneMap boneMap = m_Skeleton.RearrangeSkeleton();
+	for (SkeletalMesh& cpuMesh : m_CPUMeshes)
+	{
+		cpuMesh.RearrangeMesh(boneMap);
+	}
 	
 	for (const Clip& clip : clips)
 	{
-		m_Clips.emplace_back(AnimationUtilities::OptimizeClip(clip));
+		FastClip optimizedClip = AnimationUtilities::OptimizeClip(clip);
+		optimizedClip.RearrangeClip(boneMap);
+		m_Clips.emplace_back(optimizedClip);
 	}
 
     m_GPUMeshes = m_CPUMeshes;
-    const unsigned int numMeshes = m_GPUMeshes.size();
-    for (unsigned int i = 0; i < numMeshes; ++i)
-    {
-        m_GPUMeshes[i].UpdateOpenGLBuffers();
-    }
+	for (SkeletalMesh& gpuMesh : m_GPUMeshes)
+	{
+		gpuMesh.UpdateOpenGLBuffers();
+	}
 
     m_StaticShader = new Shader("Shaders/static.vert", "Shaders/lit.frag");
     m_SkinnedShader = new Shader("Shaders/preskinned.vert", "Shaders/lit.frag");

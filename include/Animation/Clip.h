@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -9,6 +10,7 @@ class Pose;
 template<typename T, unsigned int N> class Track;
 template <typename T, unsigned int N> class FastTrack;
 template <typename VTRACK, typename QTRACK> class TTransformTrack;
+typedef std::map<int, int> BoneMap;
 
 template <typename TRACK>
 class TClip
@@ -32,8 +34,11 @@ public:
     void RecalculateDuration();
 
     float Sample(Pose& outPose, float t) const;
+    
     TRACK& operator[](unsigned int id);
     const TRACK& operator[] (unsigned int id) const;
+
+    void RearrangeClip(const BoneMap& boneMap);
     
 protected:
     mutable std::vector<TRACK> m_Tracks;
