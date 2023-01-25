@@ -1,9 +1,12 @@
-﻿#include "Application/SimpleBlendApp.h"
+﻿#include "Application/AllBlendApp.h"
+
+#include <random>
 
 #include "Animation/AnimationUtilities.h"
 #include "Animation/Clip.h"
 #include "Animation/FastTrack.h"
 #include "Animation/TransformTrack.h"
+#include "Animation/Blend/CrossFadeTarget.h"
 #include "Core/BasicUtils.h"
 #include "Core/Mat4.h"
 #include "Core/Vec3.h"
@@ -15,23 +18,14 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-template <typename TRACK>
-void SimpleBlendAnimationInstance::Update(const std::vector<TClip<TRACK>>& clips, float deltaTime)
-{
-	m_Time = clips[m_CurrentClip].Sample(m_Pose, m_Time + m_PlaybackSpeed * deltaTime);
-	
-} // Update
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-SimpleBlendApp::SimpleBlendApp() : Application()
+AllBlendApp::AllBlendApp() : Application()
 {
     
-} // SimpleBlendApp
+} // AllBlendApp
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SimpleBlendApp::Initialize()
+void AllBlendApp::Initialize()
 {
     Application::Initialize();
 
@@ -48,9 +42,6 @@ void SimpleBlendApp::Initialize()
 		mesh.UpdateOpenGLBuffers();
 	}
 	
-	m_FinalPose = m_Skeleton.GetRestPose();
-	m_FinalPose.GetMatrixPalette(m_PreSkinnedPalette);
-	
 	for (const Clip& clip : clips)
 	{
 		FastClip optimizedClip = AnimationUtilities::OptimizeClip(clip);
@@ -62,38 +53,43 @@ void SimpleBlendApp::Initialize()
     m_Texture = new Texture("Assets/Woman.png");
 	
 	// Animations: [Running, Jump2, PickUp, SitIdle, Idle, Punch, Sitting, Walking, Jump, Lean_Left]
-	m_A1.m_Pose = m_FinalPose;
-	m_A1.m_CurrentClip = 7;
-	m_A1.m_PlaybackSpeed = 1.f;
-
-	m_A2.m_Pose = m_FinalPose;
-	m_A2.m_CurrentClip = 0;
-	m_A2.m_PlaybackSpeed = 1.f;
+	static constexpr unsigned int INITIAL_CLIP = 6;
+	m_FadeController.SetSkeleton(m_Skeleton);
+	m_FadeController.Play(&m_Clips[INITIAL_CLIP]);
+	m_FadeController.Update(0.0f);
+	m_FadeController.GetCurrentPose().GetMatrixPalette(m_PreSkinnedPalette);
 	
 } // Initialize
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SimpleBlendApp::Update(float deltaTime)
+void AllBlendApp::Update(float deltaTime)
 {
     Application::Update(deltaTime);
 
-	// Update anims and blend
-	m_A1.Update(m_Clips, deltaTime);
-	m_A2.Update(m_Clips, deltaTime);
+	// Update anim controller
+	m_FadeController.Update(deltaTime);
 
-	static constexpr float MAX_BLEND_TIME = 1.f;
-	float alpha = std::min(m_BlendTime / MAX_BLEND_TIME, 1.f);
-	if (bInvertBlend)
+	m_FadeOutTimer -= deltaTime;
+	if (m_FadeOutTimer < 0.f)
 	{
-		alpha = 1.f - alpha;
-	}
+		m_FadeOutTimer = m_FadeOutCooldown;
 
-	static constexpr int ROOT_BONE = -1;
-	Pose::Blend(m_FinalPose, m_A1.m_Pose, m_A2.m_Pose, alpha, ROOT_BONE);
+		// https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
+		static std::random_device rd;  //Will be used to obtain a seed for the random number engine
+		static std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+		static std::uniform_int_distribution<unsigned> uniformDist(0, m_Clips.size() - 1);
+		
+		unsigned int clip = uniformDist(gen);
+		while (clip == m_CurrentClip)
+		{
+			clip = uniformDist(gen);
+		}
+		m_FadeController.FadeTo(&m_Clips[clip], m_FadeOutTime);
+	}
 	
 	// Merge pose palette with inverse bind pose
-	m_FinalPose.GetMatrixPalette(m_PreSkinnedPalette);
+	m_FadeController.GetCurrentPose().GetMatrixPalette(m_PreSkinnedPalette);
 	const std::vector<Mat4>& invBindPose = m_Skeleton.GetInvBindPose();
 	
 	const unsigned int numBones = m_PreSkinnedPalette.size();
@@ -101,26 +97,16 @@ void SimpleBlendApp::Update(float deltaTime)
 	{
 		m_PreSkinnedPalette[i] *= invBindPose[i];
 	}
-
-	m_BlendTime += deltaTime;
-
-	static constexpr float SWAP_ANIM_TIME = 2.f;
-	if (m_BlendTime >= SWAP_ANIM_TIME)
-	{
-		m_BlendTime = 0.0f;
-		m_FinalPose = m_Skeleton.GetRestPose();
-		bInvertBlend = !bInvertBlend;
-	}
     
 } // Update
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SimpleBlendApp::Render(float inAspectRatio)
+void AllBlendApp::Render(float inAspectRatio)
 {
     Application::Render(inAspectRatio);
 	
-	static const Mat4 VIEW = Mat4::CreateLookAt({0, 5, 5}, {0, 3, 0}, {0, 1, 0});
+	static const Mat4 VIEW = Mat4::CreateLookAt({0, 3, 7}, {0, 3, 0}, {0, 1, 0});
 	static const Mat4 MODEL;
 	const Mat4 projection = Mat4::CreatePerspective(60.0f, inAspectRatio, 0.01f, 1000.0f);
 	
@@ -152,7 +138,7 @@ void SimpleBlendApp::Render(float inAspectRatio)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SimpleBlendApp::Shutdown()
+void AllBlendApp::Shutdown()
 {
 	delete m_Shader;
 	delete m_Texture;

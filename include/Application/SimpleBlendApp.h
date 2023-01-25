@@ -1,9 +1,10 @@
 ﻿#pragma once
 
 #include "Application.h"
-#include "Core/Transform.h"
 #include "SkeletalMesh/Skeleton.h"
 
+struct Quat;
+struct Vec3;
 class SkeletalMesh;
 class Shader;
 class Texture;
