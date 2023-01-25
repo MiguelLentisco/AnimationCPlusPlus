@@ -1,7 +1,7 @@
 ﻿#include "Core/Quat.h"
 
+#include "Core/BasicUtils.h"
 #include "Core/Mat4.h"
-#include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ float Quat::LenSq() const
 float Quat::Len() const
 {
     const float lenSq = LenSq();
-    return Utils::IsZero(lenSq) ? 0.f : std::sqrt(lenSq);
+    return BasicUtils::IsZero(lenSq) ? 0.f : std::sqrt(lenSq);
     
 } // Len
 
@@ -41,7 +41,7 @@ float Quat::Len() const
 void Quat::Normalize()
 {
     const float lenSq = LenSq();
-    if (Utils::IsZero(lenSq))
+    if (BasicUtils::IsZero(lenSq))
     {
         return;
     }
@@ -57,7 +57,7 @@ void Quat::Normalize()
 Quat Quat::Normalized() const
 {
     const float lenSq = LenSq();
-    if (Utils::IsZero(lenSq))
+    if (BasicUtils::IsZero(lenSq))
     {
         return {};
     }
@@ -80,7 +80,7 @@ Quat Quat::Conjugate() const
 Quat Quat::Inverse() const
 {
     const float lenSq = LenSq();
-    if (Utils::IsZero(lenSq))
+    if (BasicUtils::IsZero(lenSq))
     {
         return {};    
     }
@@ -198,7 +198,7 @@ Quat Quat::operator^(float f) const
 
 bool Quat::operator==(const Quat& q) const
 {
-    return vector == q.vector && Utils::AreEqual(scalar, q.scalar);
+    return vector == q.vector && BasicUtils::AreEqual(scalar, q.scalar);
     
 } // operator==
 
@@ -343,7 +343,7 @@ Quat Quat::NLerp(const Quat& to, float t) const
 
 Quat Quat::SLerp(const Quat& from, const Quat& to, float t)
 {
-    if (Utils::AreEqual(from | to, 1.f))
+    if (BasicUtils::AreEqual(from | to, 1.f))
     {
         return NLerp(from, to, t);
     }

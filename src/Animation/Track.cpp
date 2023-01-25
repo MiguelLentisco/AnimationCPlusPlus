@@ -98,6 +98,15 @@ const std::vector<Frame<N>>& Track<T, N>::GetFrames() const
 // ---------------------------------------------------------------------------------------------------------------------
 
 template <typename T, unsigned N>
+std::vector<Frame<N>>& Track<T, N>::GetFrames()
+{
+    return m_Frames;
+    
+} // GetFrames
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+template <typename T, unsigned N>
 void Track<T, N>::SetInterpolation(Interpolation interpolation)
 {
     m_Interpolation = interpolation;

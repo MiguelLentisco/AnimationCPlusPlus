@@ -1,5 +1,6 @@
 ﻿#include "Application/BasicRenderApp.h"
 
+#include "Core/BasicUtils.h"
 #include "Core/Mat4.h"
 #include "Core/Quat.h"
 #include "Core/TVec2.h"
@@ -10,7 +11,6 @@
 #include "Render/Shader.h"
 #include "Render/Texture.h"
 #include "Render/Uniform.h"
-#include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ void BasicRenderApp::Render(float inAspectRatio)
 
 	Mat4 projection = Mat4::CreatePerspective(60.0f, inAspectRatio, 0.01f, 1000.0f);
 	Mat4 view = Mat4::CreateLookAt(Vec3(0, 0, -5), Vec3(0, 0, 0), Vec3(0, 1, 0));
-	Mat4 model = Quat::CreateFromAxis(Utils::DegToRad(m_Rotation), Vec3(0, 0, 1)).ToMat4();
+	Mat4 model = Quat::CreateFromAxis(BasicUtils::DegToRad(m_Rotation), Vec3(0, 0, 1)).ToMat4();
 
 	m_Shader->Bind();
 

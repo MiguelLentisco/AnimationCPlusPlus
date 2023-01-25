@@ -8,6 +8,7 @@
 #include "Animation/Interpolation.h"
 #include "Animation/Track.h"
 #include "Animation/TransformTrack.h"
+#include "Core/BasicUtils.h"
 #include "Core/Mat4.h"
 #include "Core/Transform.h"
 #include "Core/TVec2.h"
@@ -15,7 +16,6 @@
 #include "SkeletalMesh/Pose.h"
 #include "SkeletalMesh/SkeletalMesh.h"
 #include "SkeletalMesh/Skeleton.h"
-#include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -372,7 +372,7 @@ void GLTFLoader::MeshFromAttribute(SkeletalMesh& outMesh, const cgltf_attribute&
                 // Replace node ID to skeleton hierarchy boneID
                 for (unsigned int j = 0; j < 4; ++j)
                 {
-                    const int nodeID = Utils::FloatToInt(*(attributeValue + j));
+                    const int nodeID = BasicUtils::FloatToInt(*(attributeValue + j));
                     const int boneID = GetNodeIndex(skin->joints[nodeID], nodes, nodeCount);
                     bonesID[j] = std::max(0, boneID);
                 }

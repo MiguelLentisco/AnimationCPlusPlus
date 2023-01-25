@@ -232,18 +232,3 @@ void TTransformTrack<VTRACK, QTRACK>::CheckEndTime(const Track<T, N>& track, boo
 } // CheckEndTime
 
 // ---------------------------------------------------------------------------------------------------------------------
-
-FastTransformTrack TransformUtilities::OptimizeTransformTrack(const TransformTrack& transformTrack)
-{
-    FastTransformTrack result;
-
-    result.SetID(transformTrack.GetID());
-    result.GetPositionTrack() = FastVectorTrack::OptimizeTrack(transformTrack.GetPositionTrack());
-    result.GetRotationTrack() = FastQuaternionTrack::OptimizeTrack(transformTrack.GetRotationTrack());
-    result.GetScaleTrack() = FastVectorTrack::OptimizeTrack(transformTrack.GetScaleTrack());
-
-    return result;
-    
-} // OptimizeTransformTrack
-
-// ---------------------------------------------------------------------------------------------------------------------

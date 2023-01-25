@@ -5,9 +5,13 @@
 
 #include <algorithm>
 
-class Utils
+class BasicUtils
 {
 public:
+    BasicUtils() = delete;
+    BasicUtils(const BasicUtils&) = delete;
+    BasicUtils& operator=(const BasicUtils&) = delete;
+    
     static bool AreEqual(float a, float b, float tol = EPS);
     static bool IsZero(float a, float tol = EPS);
 
@@ -30,5 +34,5 @@ public:
 
     static int FloatToInt(float f);
     
-}; // Utils
+}; // BasicUtils
 

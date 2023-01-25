@@ -48,10 +48,3 @@ protected:
 
 typedef TClip<TTransformTrack<Track<Vec3, 3>, Track<Quat, 4>>> Clip;
 typedef TClip<TTransformTrack<FastTrack<Vec3, 3>, FastTrack<Quat, 4>>> FastClip;
-
-class ClipUtilities
-{
-public:
-    static FastClip OptimizeClip(const Clip& clip);
-    
-}; // ClipUtilities

@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "Utils/Utils.h"
+#include "Core/BasicUtils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -180,7 +180,7 @@ Vec3& Vec3::operator*=(const Vec3& v)
 
 bool Vec3::IsZeroVec() const
 {
-    return Utils::IsZero(LenSq());
+    return BasicUtils::IsZero(LenSq());
     
 } // IsZeroVec
 
@@ -237,7 +237,7 @@ Vec3 Vec3::operator^(const Vec3& v) const
 float Vec3::Len() const
 {
     const float lenSq = LenSq();
-    return Utils::IsZero(lenSq) ? .0f : sqrtf(lenSq);
+    return BasicUtils::IsZero(lenSq) ? .0f : sqrtf(lenSq);
     
 } // Len
 
@@ -286,7 +286,7 @@ float Vec3::DistSq(const Vec3& v) const
 void Vec3::Normalize()
 {
     const float lenSq = LenSq();
-    if (Utils::IsZero(lenSq) || Utils::AreEqual(lenSq, 1.f))
+    if (BasicUtils::IsZero(lenSq) || BasicUtils::AreEqual(lenSq, 1.f))
     {
         return;
     }
@@ -303,7 +303,7 @@ void Vec3::Normalize()
 Vec3 Vec3::Normalized() const
 {
     const float lenSq = LenSq();
-    if (Utils::IsZero(lenSq) || Utils::AreEqual(lenSq, 1.f))
+    if (BasicUtils::IsZero(lenSq) || BasicUtils::AreEqual(lenSq, 1.f))
     {
         return *this;
     }
@@ -319,7 +319,7 @@ float Vec3::Angle(const Vec3& u, const Vec3& v)
 {
     const float uLenSq = u.LenSq();
     const float vLenSq = v.LenSq();
-    if (Utils::IsZero(uLenSq) || Utils::IsZero(vLenSq))
+    if (BasicUtils::IsZero(uLenSq) || BasicUtils::IsZero(vLenSq))
     {
         return 0.f;
     }
@@ -343,7 +343,7 @@ float Vec3::Angle(const Vec3& v) const
 Vec3 Vec3::Project(const Vec3& u, const Vec3& v)
 {
     const float modV = v.Len();
-    if (Utils::IsZero(modV))
+    if (BasicUtils::IsZero(modV))
     {
         return {};
     }
@@ -382,7 +382,7 @@ Vec3 Vec3::Reject(const Vec3& v) const
 Vec3 Vec3::Reflect(const Vec3& u, const Vec3& v)
 {
     const float modV = v.Len();
-    if (Utils::IsZero(modV))
+    if (BasicUtils::IsZero(modV))
     {
         return {};
     }

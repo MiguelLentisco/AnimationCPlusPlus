@@ -49,10 +49,3 @@ private:
 
 typedef TTransformTrack<Track<Vec3, 3>, Track<Quat, 4>> TransformTrack;
 typedef TTransformTrack<FastTrack<Vec3, 3>, FastTrack<Quat, 4>> FastTransformTrack;
-
-class TransformUtilities
-{
-public:
-    static FastTransformTrack OptimizeTransformTrack(const TransformTrack& transformTrack);
-    
-}; // TransformUtilities

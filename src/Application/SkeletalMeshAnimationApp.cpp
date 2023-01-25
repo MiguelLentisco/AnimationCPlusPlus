@@ -1,5 +1,6 @@
 ﻿#include "Application/SkeletalMeshAnimationApp.h"
 
+#include "Animation/AnimationUtilities.h"
 #include "Animation/Clip.h"
 #include "Animation/FastTrack.h"
 #include "Animation/TransformTrack.h"
@@ -113,7 +114,7 @@ void SkeletalMeshAnimationApp::Initialize()
 	
 	for (const Clip& clip : clips)
 	{
-		m_Clips.emplace_back(ClipUtilities::OptimizeClip(clip));
+		m_Clips.emplace_back(AnimationUtilities::OptimizeClip(clip));
 	}
 
     m_GPUMeshes = m_CPUMeshes;

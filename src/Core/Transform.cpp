@@ -1,7 +1,7 @@
 ﻿#include "Core/Transform.h"
 
+#include "Core/BasicUtils.h"
 #include "Core/Mat4.h"
-#include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ Transform Transform::Inverse() const
 {
     const Quat invRot = rotation.Inverse();
 
-    auto InvFloat = [](float f) -> float { return Utils::IsZero(f) ? 0.f : 1.f / f; };
+    auto InvFloat = [](float f) -> float { return BasicUtils::IsZero(f) ? 0.f : 1.f / f; };
     const Vec3 invScale = {InvFloat(scale.x), InvFloat(scale.y), InvFloat(scale.z)}; 
 
     const Vec3 invPos = invRot * (invScale * -position);

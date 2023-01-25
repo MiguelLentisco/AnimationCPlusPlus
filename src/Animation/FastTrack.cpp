@@ -1,7 +1,7 @@
 ﻿#include "Animation/FastTrack.h"
 
 #include "Animation/Frame.h"
-#include "Utils/Utils.h"
+#include "Core/BasicUtils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ void FastTrack<T, N>::UpdateIndexLookupTable()
     for (unsigned int i = 1; i < numSamples - 1; ++i)
     {
         const float alpha = static_cast<float>(i) / static_cast<float>(numSamples - 1);
-        const float t = Utils::Lerp(startTime, endTime, alpha);
+        const float t = BasicUtils::Lerp(startTime, endTime, alpha);
         
         // Search index
         unsigned int frameIdx = 0;
@@ -51,25 +51,6 @@ void FastTrack<T, N>::UpdateIndexLookupTable()
     }
     
 } // UpdateIndexLookupTable
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-template <typename T, unsigned N>
-FastTrack<T, N> FastTrack<T, N>::OptimizeTrack(const Track<T, N>& track)
-{
-    FastTrack<T, N> result;
-    
-    result.SetInterpolation(track.GetInterpolation());
-    
-    unsigned int size = track.GetSize();
-    result.Resize(size);
-
-    std::copy(track.GetFrames().begin(), track.GetFrames().end(), result.m_Frames.begin());
-    result.UpdateIndexLookupTable();
-
-    return result;
-    
-} // OptimizeTrack
 
 // ---------------------------------------------------------------------------------------------------------------------
 

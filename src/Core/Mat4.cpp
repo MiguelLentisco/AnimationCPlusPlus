@@ -4,8 +4,8 @@
 #include <stdexcept>
 #include <utility>
 
+#include "Core/BasicUtils.h"
 #include "Core/Vec3.h"
-#include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ bool Mat4::operator==(const Mat4& m) const
 {
     for (int i = 0; i < 16; ++i)
     {
-        if (!Utils::AreEqual(v[i], m.v[i]))
+        if (!BasicUtils::AreEqual(v[i], m.v[i]))
         {
             return false;
         }
@@ -261,7 +261,7 @@ Mat4 Mat4::Adjugate() const
 void Mat4::Invert()
 {
     const float det = Determinant();
-    if (Utils::IsZero(det))
+    if (BasicUtils::IsZero(det))
     {
         std::cout << "Matrix determinant is 0\n";
         return;
@@ -276,7 +276,7 @@ void Mat4::Invert()
 Mat4 Mat4::Inverse() const
 {
     const float det = Determinant();
-    if (Utils::IsZero(det, 1E-10f))
+    if (BasicUtils::IsZero(det, 1E-10f))
     {
         std::cout << "Matrix determinant is 0\n";
         return {};
@@ -290,7 +290,7 @@ Mat4 Mat4::Inverse() const
 
 Mat4 Mat4::CreateFrustum(float l, float r, float b, float t, float n, float f)
 {
-    if (Utils::AreEqual(l, r) || Utils::AreEqual(t,  b) || Utils::AreEqual(n, f))
+    if (BasicUtils::AreEqual(l, r) || BasicUtils::AreEqual(t,  b) || BasicUtils::AreEqual(n, f))
     {
         std::cout << "Invalid frustum\n";
         return {};
@@ -310,7 +310,7 @@ Mat4 Mat4::CreateFrustum(float l, float r, float b, float t, float n, float f)
 
 Mat4 Mat4::CreatePerspective(float fov, float aspect, float n, float f)
 {
-    const float top = n * std::tan(Utils::DegToRad(.5f * fov));
+    const float top = n * std::tan(BasicUtils::DegToRad(.5f * fov));
     const float right = top * aspect;
     
     return CreateFrustum(-right, right, -top, top, n, f);
@@ -321,7 +321,7 @@ Mat4 Mat4::CreatePerspective(float fov, float aspect, float n, float f)
 
 Mat4 Mat4::CreateOrtho(float l, float r, float b, float t, float n, float f)
 {
-    if (Utils::AreEqual(l, r) || Utils::AreEqual(t,  b) || Utils::AreEqual(n, f))
+    if (BasicUtils::AreEqual(l, r) || BasicUtils::AreEqual(t,  b) || BasicUtils::AreEqual(n, f))
     {
         std::cout << "Invalid frustum\n";
         return {};

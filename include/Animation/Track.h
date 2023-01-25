@@ -20,6 +20,7 @@ public:
     unsigned int GetSize() const;
     Interpolation GetInterpolation() const;
     const std::vector<Frame<N>>& GetFrames() const;
+    std::vector<Frame<N>>& GetFrames();
     
     void SetInterpolation(Interpolation interpolation);
     void Resize(unsigned int size);

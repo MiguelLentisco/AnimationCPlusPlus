@@ -135,13 +135,30 @@ Transform Pose::operator[](unsigned idx) const
 
 void Pose::GetMatrixPalette(std::vector<Mat4>& out) const
 {
-    const unsigned int size = GetSize();
-    if (out.size() != size)
+    const int size = static_cast<int>(GetSize());
+    out.resize(size);
+
+    int i = 0;
+
+    // Optimized method only for ordered bones
+    for (; i < size; ++i)
     {
-        out.resize(size);
+        const int parent = m_Parents[i];
+        if (parent > i)
+        {
+            break;
+        }
+
+        Mat4 global = m_Joints[i].ToMat4();
+        if (parent >= 0)
+        {
+            global = out[parent] * global;
+        }
+        out[i] = global;
     }
 
-    for (unsigned int i = 0; i < size; ++i)
+    // If not ordered, use unoptimized method
+    for (; i < size; ++i)
     {
         out[i] = GetGlobalTransform(i).ToMat4();
     }

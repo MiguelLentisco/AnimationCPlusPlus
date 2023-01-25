@@ -1,10 +1,10 @@
-﻿#include "Utils/Utils.h"
+﻿#include "Core/BasicUtils.h"
 
 #include <cmath>
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool Utils::AreEqual(float a, float b, float tol)
+bool BasicUtils::AreEqual(float a, float b, float tol)
 {
     return std::abs(a - b) <= tol; 
     
@@ -12,7 +12,7 @@ bool Utils::AreEqual(float a, float b, float tol)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-bool Utils::IsZero(float a, float tol)
+bool BasicUtils::IsZero(float a, float tol)
 {
     return AreEqual(a, 0.f, tol);
     
@@ -20,7 +20,7 @@ bool Utils::IsZero(float a, float tol)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-float Utils::DegToRad(float deg)
+float BasicUtils::DegToRad(float deg)
 {
     static constexpr float DEG_TO_RAD = PI / 180.f;
     return deg * DEG_TO_RAD;
@@ -29,7 +29,7 @@ float Utils::DegToRad(float deg)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-float Utils::RadToDef(float rad)
+float BasicUtils::RadToDef(float rad)
 {
     static constexpr float RAD_TO_DEG = 180.f / PI;
     return rad * RAD_TO_DEG;
@@ -38,7 +38,7 @@ float Utils::RadToDef(float rad)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-int Utils::FloatToInt(float f)
+int BasicUtils::FloatToInt(float f)
 {
     return static_cast<int>(std::round(f) + EPS);
     

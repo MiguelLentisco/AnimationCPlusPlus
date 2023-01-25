@@ -5,9 +5,9 @@
 #include "Animation/FastTrack.h"
 #include "Animation/Track.h"
 #include "Animation/TransformTrack.h"
+#include "Core//BasicUtils.h"
 #include "Core/Transform.h"
 #include "SkeletalMesh/Pose.h"
-#include "Utils/Utils.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -161,7 +161,7 @@ void TClip<TRACK>::RecalculateDuration()
 template <typename TRACK>
 float TClip<TRACK>::Sample(Pose& outPose, float t) const
 {
-    if (Utils::IsZero(GetDuration()))
+    if (BasicUtils::IsZero(GetDuration()))
     {
         return 0.f;
     }
@@ -239,32 +239,11 @@ float TClip<TRACK>::AdjustTimeToFitRange(float t) const
     }
     else
     {
-        t = Utils::Clamp(t, m_StartTime, m_EndTime);
+        t = BasicUtils::Clamp(t, m_StartTime, m_EndTime);
     }
 
     return t;
     
 } // AdjustTimeToFitRange
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-FastClip ClipUtilities::OptimizeClip(const Clip& clip)
-{
-    FastClip result;
-
-    result.SetName(clip.GetName());
-    result.SetLooping(clip.IsLooping());
-
-    const unsigned int size = clip.GetSize();
-    for (unsigned int i = 0; i < size; ++i)
-    {
-        const unsigned boneID = clip.GetIDAtIndex(i);
-        result[boneID] = TransformUtilities::OptimizeTransformTrack(clip[boneID]);
-    }
-
-    result.RecalculateDuration();
-    return result;
-    
-} // OptimizeClip
 
 // ---------------------------------------------------------------------------------------------------------------------

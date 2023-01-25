@@ -8,8 +8,6 @@ class FastTrack : public Track<T, N>
 public:
     void UpdateIndexLookupTable();
 
-    static FastTrack<T, N> OptimizeTrack(const Track<T, N>& track);
-
 protected:
     static constexpr float FPS = 60.f;
     
