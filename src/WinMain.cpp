@@ -7,7 +7,7 @@
 #include <windows.h>
 #include <iostream>
 
-#include "Application/SkeletalMeshAnimationApp.h"
+#include "Application/SimpleBlendApp.h"
 
 // Forward declaration
 int WINAPI WinMain(HINSTANCE, HINSTANCE, PSTR, int);
@@ -47,7 +47,7 @@ GLuint gVertexArrayObject = 0;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
     // Standard window definition
-    gApplication = new SkeletalMeshAnimationApp();
+    gApplication = new SimpleBlendApp();
     
     WNDCLASSEX wndClass;
     wndClass.cbSize = sizeof(WNDCLASSEX);

@@ -6,6 +6,7 @@
 #include "Animation/FastTrack.h"
 #include "Animation/TransformTrack.h"
 #include "Animation/Clip.h"
+#include "SkeletalMesh/Skeleton.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -25,6 +26,17 @@ FastTrack<T, N> AnimationUtilities::OptimizeTrack(const Track<T, N>& track)
     return result;
     
 } // OptimizeTrack
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+template <typename TRACK>
+Pose AnimationUtilities::MakeAdditivePose(const Skeleton& skeleton, const TClip<TRACK>& clip)
+{
+    Pose result = skeleton.GetRestPose();
+    clip.Sample(result, clip.GetStartTime());
+    return result;
+    
+} // MakeAdditivePose
 
 // ---------------------------------------------------------------------------------------------------------------------
 

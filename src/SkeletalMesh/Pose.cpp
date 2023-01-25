@@ -78,7 +78,7 @@ int Pose::GetParent(unsigned idx) const
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-Transform Pose::GetLocalTransform(unsigned idx) const
+const Transform& Pose::GetLocalTransform(unsigned idx) const
 {
     return m_Joints[idx];
     
@@ -194,5 +194,74 @@ bool Pose::operator!=(const Pose& other) const
     return !(*this == other);
     
 } // operator!=
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+bool Pose::IsInHierarchy(unsigned root, unsigned search) const
+{
+    if (search == root)
+    {
+        return true;
+    }
+
+    const int iRoot = static_cast<int>(root);
+    for (int boneID = GetParent(search); boneID >= 0; boneID = GetParent(boneID))
+    {
+        if (boneID == iRoot)
+        {
+            return true;
+        }
+    }
+
+    return false;
+    
+} // IsInHierarchy
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void Pose::Blend(Pose& blendedPose, const Pose& start, const Pose& end, float alpha, int rootBone)
+{
+    const unsigned numBones = blendedPose.GetSize();
+    for (unsigned int i = 0; i < numBones; ++i)
+    {
+        if (rootBone >= 0 && !blendedPose.IsInHierarchy(rootBone, i))
+        {
+            continue;
+        }
+
+        blendedPose.SetLocalTransform(i, Transform::Mix(start.GetLocalTransform(i), end.GetLocalTransform(i), alpha));
+    }
+    
+} // Blend
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void Pose::Add(Pose& addedPose, const Pose& inputPose, const Pose& addPose, const Pose& basePose, int blendRoot)
+{
+    const unsigned int numBones = addPose.GetSize();
+    for (unsigned int i = 0; i < numBones; ++i)
+    {
+        const Transform& inputTransform = inputPose.GetLocalTransform(i);
+        const Transform& addTransform = addPose.GetLocalTransform(i);
+        const Transform& addBasePose = basePose.GetLocalTransform(i);
+
+        if (blendRoot >= 0 && !addPose.IsInHierarchy(blendRoot, i))
+        {
+            continue;
+        }
+
+        // addedPose = inputPose + (addPose - basePose)
+        Transform result =
+        {
+            inputTransform.position + (addTransform.position - addBasePose.position),
+            (inputTransform.rotation * (addBasePose.rotation.Inverse() * addTransform.rotation)).Normalized(),
+            inputTransform.scale + (addTransform.scale - addBasePose.scale)
+        };
+
+        addedPose.SetLocalTransform(i, result);
+        
+    }
+    
+} // Add
 
 // ---------------------------------------------------------------------------------------------------------------------

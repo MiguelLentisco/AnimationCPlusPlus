@@ -19,9 +19,9 @@ public:
     static float RadToDef(float rad);
 
     template <typename T>
-    static T Clamp(const T& n, const T& lower, const T& upper)
+    static T Clamp(const T& val, const T& lower, const T& upper)
     {
-        return std::max(lower, std::min(n, upper));
+        return std::max(lower, std::min(val, upper));
     
     } // Clamp
 
