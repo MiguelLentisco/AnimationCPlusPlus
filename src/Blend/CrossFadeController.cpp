@@ -1,9 +1,9 @@
-﻿#include "Animation/Blend/CrossFadeController.h"
+﻿#include "Blend/CrossFadeController.h"
 
 #include "Animation/Clip.h"
 #include "Animation/FastTrack.h"
 #include "Animation/TransformTrack.h"
-#include "Animation/Blend/CrossFadeTarget.h"
+#include "Blend/CrossFadeTarget.h"
 #include "Core/Mat4.h"
 
 // ---------------------------------------------------------------------------------------------------------------------

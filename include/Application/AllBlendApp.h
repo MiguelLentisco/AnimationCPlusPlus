@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Application.h"
-#include "Animation/Blend/CrossFadeController.h"
+#include "Blend/CrossFadeController.h"
 #include "SkeletalMesh/Skeleton.h"
 
 struct Quat;

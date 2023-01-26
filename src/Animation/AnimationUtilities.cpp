@@ -10,6 +10,10 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+template FastScalarTrack AnimationUtilities::OptimizeTrack(const ScalarTrack&);
+template FastVectorTrack AnimationUtilities::OptimizeTrack(const VectorTrack&);
+template FastQuaternionTrack AnimationUtilities::OptimizeTrack(const QuaternionTrack&);
+
 template <typename T, unsigned N>
 FastTrack<T, N> AnimationUtilities::OptimizeTrack(const Track<T, N>& track)
 {

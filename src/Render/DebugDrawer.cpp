@@ -2,6 +2,8 @@
 
 #include "Core/Transform.h"
 #include "Core/Vec3.h"
+#include "IK/CCDSolver.h"
+#include "IK/FABRIKSolver.h"
 #include "Render/Attribute.h"
 #include "Render/Draw.h"
 #include "Render/Shader.h"
@@ -140,5 +142,75 @@ void DebugDrawer::FromPose(const Pose& pose)
     }
     
 } // FromPose
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void DebugDrawer::LinesFromIKSolver(const CCDSolver& solver)
+{
+    const unsigned int size = solver.GetSize();
+    if (size < 2)
+    {
+        return;
+    }
+    
+    const unsigned int requiredVerts = (size - 1) * 2;
+    m_Points.resize(requiredVerts);
+    
+    for (unsigned int i = 0; i < size - 1; ++i)
+    {
+        m_Points[2*i] = solver.GetGlobalTransform(i).position;
+        m_Points[2*i+1] = solver.GetGlobalTransform(i + 1).position;
+    }
+    
+} // LinesFromIKSolver
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void DebugDrawer::PointsFromIKSolver(const CCDSolver& solver)
+{
+    const unsigned int requiredVerts = solver.GetSize();
+    m_Points.resize(requiredVerts);
+
+    for (unsigned int i = 0; i < requiredVerts; ++i)
+    {
+        m_Points[i] = solver.GetGlobalTransform(i).position;
+    }
+    
+} // PointsFromIKSolver
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void DebugDrawer::LinesFromIKSolver(const FABRIKSolver& solver)
+{
+    const unsigned int size = solver.GetSize();
+    if (size < 2)
+    {
+        return;
+    }
+    
+    const unsigned int requiredVerts = (size - 1) * 2;
+    m_Points.resize(requiredVerts);
+    
+    for (unsigned int i = 0; i < size - 1; ++i)
+    {
+        m_Points[2*i] = solver.GetGlobalTransform(i).position;
+        m_Points[2*i+1] = solver.GetGlobalTransform(i + 1).position;
+    }
+    
+} // LinesFromIKSolver
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void DebugDrawer::PointsFromIKSolver(const FABRIKSolver& solver)
+{
+    const unsigned int requiredVerts = solver.GetSize();
+    m_Points.resize(requiredVerts);
+
+    for (unsigned int i = 0; i < requiredVerts; ++i)
+    {
+        m_Points[i] = solver.GetGlobalTransform(i).position;
+    }
+    
+} // PointsFromIKSolver
 
 // ---------------------------------------------------------------------------------------------------------------------

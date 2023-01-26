@@ -2,6 +2,8 @@
 
 #include <vector>
 
+class FABRIKSolver;
+class CCDSolver;
 class Pose;
 class Shader;
 struct Vec3;
@@ -34,6 +36,10 @@ public:
     void Draw(DebugDrawMode mode, const Vec3& color, const Mat4& mvp);
 
     void FromPose(const Pose& pose);
+    void LinesFromIKSolver(const CCDSolver& solver);
+    void PointsFromIKSolver(const CCDSolver& solver);
+    void LinesFromIKSolver(const FABRIKSolver& solver);
+    void PointsFromIKSolver(const FABRIKSolver& solver);
 
 protected:
     Shader* m_Shader;

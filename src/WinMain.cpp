@@ -3,11 +3,19 @@
 #define WIN32_LEAN_AND_MEAN
 #define WIN32_EXTRA_LEAN
 
-#include <glad/glad.h>
-#include <windows.h>
 #include <iostream>
+#include <windows.h>
+#include <glad/glad.h>
 
 #include "Application/AdditiveBlendApp.h"
+#include "Application/AllBlendApp.h"
+#include "Application/BasicRenderApp.h"
+#include "Application/CCDIKApp.h"
+#include "Application/FABRIKApp.h"
+#include "Application/InterpolationsApp.h"
+#include "Application/SimpleBlendApp.h"
+#include "Application/SkeletalAnimationApp.h"
+#include "Application/SkeletalMeshAnimationApp.h"
 
 // Forward declaration
 int WINAPI WinMain(HINSTANCE, HINSTANCE, PSTR, int);
@@ -47,7 +55,7 @@ GLuint gVertexArrayObject = 0;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
     // Standard window definition
-    gApplication = new AdditiveBlendApp();
+    gApplication = new FABRIKApp();
     
     WNDCLASSEX wndClass;
     wndClass.cbSize = sizeof(WNDCLASSEX);
@@ -174,10 +182,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
             DispatchMessage(&msg);
         }
 
+        // Avoid same tick
+        const DWORD thisTick = GetTickCount();
+        if (thisTick == lastTick)
+        {
+            continue;
+        }
+
         // Update tick
         if (gApplication != nullptr)
         {
-            const DWORD thisTick = GetTickCount();
             const float dt = static_cast<float>(thisTick - lastTick) * .001f;
             lastTick = thisTick;
             gApplication->Update(dt);

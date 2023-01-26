@@ -235,17 +235,17 @@ std::vector<Clip> GLTFLoader::LoadAnimationClips(const cgltf_data* data)
             if (channel.target_path == cgltf_animation_path_type_translation)
             {
                 VectorTrack& track = transformTrack.GetPositionTrack();
-                TrackFromChannel<Vec3, 3>(track, channel);
+                TrackFromChannel(track, channel);
             }
             else if (channel.target_path == cgltf_animation_path_type_scale)
             {
                 VectorTrack& track = transformTrack.GetScaleTrack();
-                TrackFromChannel<Vec3, 3>(track, channel);
+                TrackFromChannel(track, channel);
             }
             else if (channel.target_path == cgltf_animation_path_type_rotation)
             {
                 QuaternionTrack& track = transformTrack.GetRotationTrack();
-                TrackFromChannel<Quat,4>(track, channel);
+                TrackFromChannel(track, channel);
             }
         }
 

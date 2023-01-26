@@ -6,7 +6,7 @@
 #include "Animation/Clip.h"
 #include "Animation/FastTrack.h"
 #include "Animation/TransformTrack.h"
-#include "Animation/Blend/CrossFadeTarget.h"
+#include "Blend/CrossFadeTarget.h"
 #include "Core/BasicUtils.h"
 #include "Core/Mat4.h"
 #include "Core/Vec3.h"
