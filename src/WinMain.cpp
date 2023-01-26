@@ -7,7 +7,7 @@
 #include <windows.h>
 #include <iostream>
 
-#include "Application/AllBlendApp.h"
+#include "Application/AdditiveBlendApp.h"
 
 // Forward declaration
 int WINAPI WinMain(HINSTANCE, HINSTANCE, PSTR, int);
@@ -47,7 +47,7 @@ GLuint gVertexArrayObject = 0;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
     // Standard window definition
-    gApplication = new AllBlendApp();
+    gApplication = new AdditiveBlendApp();
     
     WNDCLASSEX wndClass;
     wndClass.cbSize = sizeof(WNDCLASSEX);

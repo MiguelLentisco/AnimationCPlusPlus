@@ -29,6 +29,9 @@ FastTrack<T, N> AnimationUtilities::OptimizeTrack(const Track<T, N>& track)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+template Pose AnimationUtilities::MakeAdditivePose(const Skeleton&, const TClip<TransformTrack>&);
+template Pose AnimationUtilities::MakeAdditivePose(const Skeleton&, const TClip<FastTransformTrack>&);
+
 template <typename TRACK>
 Pose AnimationUtilities::MakeAdditivePose(const Skeleton& skeleton, const TClip<TRACK>& clip)
 {
