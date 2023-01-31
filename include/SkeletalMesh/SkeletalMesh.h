@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 
+struct TriangleMesh;
 class Pose;
 class Skeleton;
 struct Mat4;
@@ -48,6 +49,9 @@ public:
     void CPUSkin(const std::vector<Mat4>& animatedPose);
 
     void RearrangeMesh(const BoneMap& boneMap);
+
+    std::vector<TriangleMesh> GetTriangles() const;
+    void GetTriangles(std::vector<TriangleMesh>& triangles) const;
 
 protected:
     std::vector<Vec3> m_Position;

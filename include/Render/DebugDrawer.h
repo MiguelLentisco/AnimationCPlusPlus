@@ -30,7 +30,8 @@ public:
 
     Vec3& operator[](unsigned int index);
     const Vec3& operator[](unsigned int index) const;
-    
+
+    void Resize(unsigned int size);
     void Push(const Vec3& v);
     void UpdateOpenGLBuffers();
     void Draw(DebugDrawMode mode, const Vec3& color, const Mat4& mvp);

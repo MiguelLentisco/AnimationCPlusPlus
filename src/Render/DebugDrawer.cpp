@@ -62,6 +62,14 @@ const Vec3& DebugDrawer::operator[](unsigned index) const
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+void DebugDrawer::Resize(unsigned size)
+{
+    m_Points.resize(size);
+    
+} // Resize
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 void DebugDrawer::Push(const Vec3& v)
 {
     m_Points.push_back(v);

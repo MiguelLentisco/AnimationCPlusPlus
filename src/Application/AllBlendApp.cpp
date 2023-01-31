@@ -30,7 +30,7 @@ void AllBlendApp::Initialize()
     Application::Initialize();
 
     cgltf_data* gltf_data = GLTFLoader::LoadGLTFFile("Assets/Woman.gltf");
-    m_Meshes = GLTFLoader::LoadMeshes(gltf_data);
+    m_Meshes = GLTFLoader::LoadSkeletalMeshes(gltf_data);
     m_Skeleton = GLTFLoader::LoadSkeleton(gltf_data);
     const std::vector<Clip> clips = GLTFLoader::LoadAnimationClips(gltf_data);
 	GLTFLoader::FreeGLTFFile(gltf_data);
@@ -57,7 +57,7 @@ void AllBlendApp::Initialize()
 	m_FadeController.SetSkeleton(m_Skeleton);
 	m_FadeController.Play(&m_Clips[INITIAL_CLIP]);
 	m_FadeController.Update(0.0f);
-	m_FadeController.GetCurrentPose().GetMatrixPalette(m_PreSkinnedPalette);
+	m_FadeController.GetCurrentPose().GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
 	
 } // Initialize
 
@@ -89,14 +89,7 @@ void AllBlendApp::Update(float deltaTime)
 	}
 	
 	// Merge pose palette with inverse bind pose
-	m_FadeController.GetCurrentPose().GetMatrixPalette(m_PreSkinnedPalette);
-	const std::vector<Mat4>& invBindPose = m_Skeleton.GetInvBindPose();
-	
-	const unsigned int numBones = m_PreSkinnedPalette.size();
-	for (unsigned int i = 0; i < numBones; ++i)
-	{
-		m_PreSkinnedPalette[i] *= invBindPose[i];
-	}
+	m_FadeController.GetCurrentPose().GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
     
 } // Update
 

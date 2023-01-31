@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-
-
 struct Vec3;
 struct Quat;
 class Pose;

@@ -27,7 +27,7 @@ void AdditiveBlendApp::Initialize()
     Application::Initialize();
 
     cgltf_data* gltf_data = GLTFLoader::LoadGLTFFile("Assets/Woman.gltf");
-    m_Meshes = GLTFLoader::LoadMeshes(gltf_data);
+    m_Meshes = GLTFLoader::LoadSkeletalMeshes(gltf_data);
     m_Skeleton = GLTFLoader::LoadSkeleton(gltf_data);
     const std::vector<Clip> clips = GLTFLoader::LoadAnimationClips(gltf_data);
 	GLTFLoader::FreeGLTFFile(gltf_data);
@@ -50,6 +50,7 @@ void AdditiveBlendApp::Initialize()
     m_Texture = new Texture("Assets/Woman.png");
 
 	m_CurrentPose = m_Skeleton.GetRestPose();
+	m_CurrentPose.GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
 	m_AddPose = m_Skeleton.GetRestPose();
 
 	// Animations: [Running, Jump2, PickUp, SitIdle, Idle, Punch, Sitting, Walking, Jump, Lean_Left]
@@ -83,14 +84,7 @@ void AdditiveBlendApp::Update(float deltaTime)
 	Pose::Add(m_CurrentPose, m_CurrentPose, m_AddPose, m_AddBasePose, ROOT_BONE);
 	
 	// Merge pose palette with inverse bind pose
-	m_CurrentPose.GetMatrixPalette(m_PreSkinnedPalette);
-	const std::vector<Mat4>& invBindPose = m_Skeleton.GetInvBindPose();
-	
-	const unsigned int numBones = m_PreSkinnedPalette.size();
-	for (unsigned int i = 0; i < numBones; ++i)
-	{
-		m_PreSkinnedPalette[i] *= invBindPose[i];
-	}
+	m_CurrentPose.GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
     
 } // Update
 

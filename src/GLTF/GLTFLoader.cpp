@@ -161,53 +161,19 @@ Skeleton GLTFLoader::LoadSkeleton(const cgltf_data* data)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-std::vector<SkeletalMesh> GLTFLoader::LoadMeshes(const cgltf_data* data)
+std::vector<SkeletalMesh> GLTFLoader::LoadSkeletalMeshes(const cgltf_data* data)
 {
-    std::vector<SkeletalMesh> result;
-    const cgltf_node* nodes = data->nodes;
-    const unsigned int nodeCount = data->nodes_count;
-
-    for (unsigned int i = 0; i < nodeCount; ++i)
-    {
-        const cgltf_node& node = nodes[i];
-        if (node.mesh == nullptr || node.skin == nullptr)
-        {
-            continue;
-        }
-
-        const unsigned int numPrimitives = node.mesh->primitives_count;
-        for (unsigned int j = 0; j < numPrimitives; ++j)
-        {
-            result.emplace_back();
-            SkeletalMesh& skeletalMesh = result[result.size() - 1];
-            
-            const cgltf_primitive& primitive = node.mesh->primitives[j];
-            const unsigned int attributesCount = primitive.attributes_count;
-            for (unsigned int k = 0; k < attributesCount; ++k)
-            {
-                const cgltf_attribute& attribute = primitive.attributes[k];
-                MeshFromAttribute(skeletalMesh, attribute, node.skin, nodes, nodeCount);
-            }
-
-            if (primitive.indices != nullptr)
-            {
-                const unsigned int indicesCount = primitive.indices->count;
-                std::vector<unsigned int>& indices = skeletalMesh.GetIndices();
-                indices.resize(indicesCount);
-            
-                for (unsigned int k = 0; k < indicesCount; ++k)
-                {
-                    indices[k] = cgltf_accessor_read_index(primitive.indices, k);
-                } 
-            }
-
-            skeletalMesh.UpdateOpenGLBuffers();
-        }
-    }
-
-    return result;
+    return LoadMeshes(data, true);
     
-} // LoadMeshes
+} // LoadSkeletalMeshes
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+std::vector<SkeletalMesh> GLTFLoader::LoadStaticMeshes(const cgltf_data* data)
+{
+    return LoadMeshes(data, false);
+    
+} // LoadStaticMeshes
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -385,6 +351,54 @@ void GLTFLoader::MeshFromAttribute(SkeletalMesh& outMesh, const cgltf_attribute&
     }
     
 } // MeshFromAttribute
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+std::vector<SkeletalMesh> GLTFLoader::LoadMeshes(const cgltf_data* data, bool bMustHaveSkin)
+{
+    std::vector<SkeletalMesh> result;
+    
+    const cgltf_node* nodes = data->nodes;
+    const unsigned int nodeCount = data->nodes_count;
+    for (unsigned int i = 0; i < nodeCount; ++i)
+    {
+        const cgltf_node& node = nodes[i];
+        if (node.mesh == nullptr || (bMustHaveSkin && node.skin == nullptr))
+        {
+            continue;
+        }
+        
+        for (unsigned int j = 0; j < node.mesh->primitives_count; ++j)
+        {
+            result.emplace_back();
+            SkeletalMesh& skeletalMesh = result[result.size() - 1];
+            
+            const cgltf_primitive& primitive = node.mesh->primitives[j];
+            for (unsigned int k = 0; k < primitive.attributes_count; ++k)
+            {
+                const cgltf_attribute& attribute = primitive.attributes[k];
+                MeshFromAttribute(skeletalMesh, attribute, node.skin, nodes, nodeCount);
+            }
+
+            if (primitive.indices != nullptr)
+            {
+                const unsigned int indicesCount = primitive.indices->count;
+                std::vector<unsigned int>& indices = skeletalMesh.GetIndices();
+                indices.resize(indicesCount);
+            
+                for (unsigned int k = 0; k < indicesCount; ++k)
+                {
+                    indices[k] = cgltf_accessor_read_index(primitive.indices, k);
+                } 
+            }
+
+            skeletalMesh.UpdateOpenGLBuffers();
+        }
+    }
+
+    return result;
+    
+} // LoadMeshes
 
 // ---------------------------------------------------------------------------------------------------------------------
 

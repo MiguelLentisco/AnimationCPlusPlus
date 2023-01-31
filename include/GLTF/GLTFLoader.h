@@ -30,7 +30,8 @@ public:
     static Pose LoadBindPose(const cgltf_data* data);
     static std::vector<std::string> LoadJointNames(const cgltf_data* data);
     static Skeleton LoadSkeleton(const cgltf_data* data);
-    static std::vector<SkeletalMesh> LoadMeshes(const cgltf_data* data);
+    static std::vector<SkeletalMesh> LoadSkeletalMeshes(const cgltf_data* data);
+    static std::vector<SkeletalMesh> LoadStaticMeshes(const cgltf_data* data);
     static std::vector<Clip> LoadAnimationClips(const cgltf_data* data);
 
 private:
@@ -39,6 +40,7 @@ private:
     static void GetScalarValues(std::vector<float>& out, unsigned int compCount, const cgltf_accessor& accessor);
     static void MeshFromAttribute(SkeletalMesh& outMesh, const cgltf_attribute& attribute, const cgltf_skin* skin,
         const cgltf_node* nodes, unsigned int nodeCount);
+    static std::vector<SkeletalMesh> LoadMeshes(const cgltf_data* data, bool bMustHaveSkin);
     template<typename T, int N>
     static void TrackFromChannel(Track<T, N>& result, const cgltf_animation_channel& channel);
     

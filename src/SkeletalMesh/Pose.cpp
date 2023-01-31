@@ -2,6 +2,7 @@
 
 #include "Core/Mat4.h"
 #include "Core/Transform.h"
+#include "SkeletalMesh/Skeleton.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -163,7 +164,21 @@ void Pose::GetMatrixPalette(std::vector<Mat4>& out) const
         out[i] = GetGlobalTransform(i).ToMat4();
     }
     
-} // GetMatrixPalette
+} // GetMatrixPaletteWithInvPose
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void Pose::GetMatrixPaletteWithInvPose(std::vector<Mat4>& out, const Skeleton& skeleton) const
+{
+    GetMatrixPalette(out);
+    
+    const unsigned int numBones = out.size();
+    for (unsigned int i = 0; i < numBones; ++i)
+    {
+        out[i] *=  skeleton.GetInvBindPose()[i];
+    }
+    
+} // GetMatrixPaletteWithInvPose
 
 // ---------------------------------------------------------------------------------------------------------------------
 

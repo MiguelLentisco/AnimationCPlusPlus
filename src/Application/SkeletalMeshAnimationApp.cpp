@@ -18,14 +18,7 @@ void AnimationInstance::Update(float deltaTime)
 	UpdateAnimation(deltaTime);
 	
 	// Merge pose palette with inverse bind pose
-	m_AnimatedPose.GetMatrixPalette(m_PosePalette);
-	const std::vector<Mat4>& invBindPose = m_Skeleton->GetInvBindPose();
-	
-	const unsigned int numBones = m_PosePalette.size();
-	for (unsigned int i = 0; i < numBones; ++i)
-	{
-		m_PosePalette[i] *= invBindPose[i];
-	}
+	m_AnimatedPose.GetMatrixPaletteWithInvPose(m_PosePalette, *m_Skeleton);
 	
 } // Update
 
@@ -107,7 +100,7 @@ void SkeletalMeshAnimationApp::Initialize()
     Application::Initialize();
 
     cgltf_data* gltf_data = GLTFLoader::LoadGLTFFile("Assets/Woman.gltf");
-    m_CPUMeshes = GLTFLoader::LoadMeshes(gltf_data);
+    m_CPUMeshes = GLTFLoader::LoadSkeletalMeshes(gltf_data);
     m_Skeleton = GLTFLoader::LoadSkeleton(gltf_data);
     const std::vector<Clip> clips = GLTFLoader::LoadAnimationClips(gltf_data);
 	GLTFLoader::FreeGLTFFile(gltf_data);
@@ -137,10 +130,12 @@ void SkeletalMeshAnimationApp::Initialize()
 	
     m_GPUAnimInfo.m_AnimatedPose = m_Skeleton.GetRestPose();
     m_GPUAnimInfo.m_PosePalette.resize(m_Skeleton.GetRestPose().GetSize());
+	m_GPUAnimInfo.m_AnimatedPose.GetMatrixPaletteWithInvPose(m_GPUAnimInfo.m_PosePalette, m_Skeleton);
 	m_GPUAnimInfo.m_Clips = &m_Clips;
 	m_GPUAnimInfo.m_Skeleton = &m_Skeleton;
     m_CPUAnimInfo.m_AnimatedPose = m_Skeleton.GetRestPose();
     m_CPUAnimInfo.m_PosePalette.resize(m_Skeleton.GetRestPose().GetSize());
+	m_CPUAnimInfo.m_AnimatedPose.GetMatrixPaletteWithInvPose(m_GPUAnimInfo.m_PosePalette, m_Skeleton);
 	m_CPUAnimInfo.m_Clips = &m_Clips;
 	m_CPUAnimInfo.m_Skeleton = &m_Skeleton;
 

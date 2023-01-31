@@ -11,11 +11,14 @@
 #include "Application/AllBlendApp.h"
 #include "Application/BasicRenderApp.h"
 #include "Application/CCDIKApp.h"
+#include "Application/CharacterIKApp.h"
 #include "Application/FABRIKApp.h"
 #include "Application/InterpolationsApp.h"
 #include "Application/SimpleBlendApp.h"
 #include "Application/SkeletalAnimationApp.h"
 #include "Application/SkeletalMeshAnimationApp.h"
+#include "SkeletalMesh/SkeletalMesh.h"
+#include "Animation/FastTrack.h"
 
 // Forward declaration
 int WINAPI WinMain(HINSTANCE, HINSTANCE, PSTR, int);
@@ -55,7 +58,7 @@ GLuint gVertexArrayObject = 0;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
     // Standard window definition
-    gApplication = new FABRIKApp();
+    gApplication = new CharacterIKApp();
     
     WNDCLASSEX wndClass;
     wndClass.cbSize = sizeof(WNDCLASSEX);

@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include <vector>
- 
+
+class Skeleton;
 struct Mat4;
 struct Transform;
 
@@ -25,6 +26,7 @@ public:
     Transform operator[](unsigned int idx) const;
 
     void GetMatrixPalette(std::vector<Mat4>& out) const;
+    void GetMatrixPaletteWithInvPose(std::vector<Mat4>& out, const Skeleton& skeleton) const;
 
     bool operator==(const Pose& other) const;
     bool operator !=(const Pose& other) const;

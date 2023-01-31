@@ -9,6 +9,7 @@
 #include "Render/Draw.h"
 #include "Render/IndexBuffer.h"
 #include "SkeletalMesh/Skeleton.h"
+#include "SkeletalMesh/TriangleMesh.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -275,6 +276,40 @@ void SkeletalMesh::RearrangeMesh(const BoneMap& boneMap)
     UpdateOpenGLBuffers();
     
 } // RearrangeMesh
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+std::vector<TriangleMesh> SkeletalMesh::GetTriangles() const
+{
+    std::vector<TriangleMesh> triangles;
+    GetTriangles(triangles);
+    return triangles;
+    
+} // GetTriangles
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void SkeletalMesh::GetTriangles(std::vector<TriangleMesh>& triangles) const
+{
+    const std::vector<Vec3>& vertices = GetPosition();
+    const std::vector<unsigned int>& indices = GetIndices();
+    
+    if (indices.empty())
+    {
+        for (unsigned int i = 0; i < vertices.size(); i += 3)
+        {
+            triangles.emplace_back(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
+        }
+    }
+    else
+    {
+        for (unsigned int i = 0; i < indices.size(); i += 3)
+        {
+            triangles.emplace_back(vertices[indices[i + 0]], vertices[indices[i + 1]], vertices[indices[i + 2]]);
+        }
+    }
+    
+} // GetTriangles
 
 // ---------------------------------------------------------------------------------------------------------------------
 
