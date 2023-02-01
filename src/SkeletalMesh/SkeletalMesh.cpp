@@ -68,7 +68,7 @@ SkeletalMesh::~SkeletalMesh()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SkeletalMesh::UpdateOpenGLBuffers()
+void SkeletalMesh::UpdateOpenGLBuffers() const
 {
     if (!m_Position.empty())
     {
@@ -104,7 +104,7 @@ void SkeletalMesh::UpdateOpenGLBuffers()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SkeletalMesh::Bind(int position, int normal, int texCoord, int boneWeight, int boneID)
+void SkeletalMesh::Bind(int position, int normal, int texCoord, int boneWeight, int boneID) const
 {
     if (position >= 0)
     {
@@ -135,7 +135,7 @@ void SkeletalMesh::Bind(int position, int normal, int texCoord, int boneWeight, 
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SkeletalMesh::Unbind(int position, int normal, int texCoord, int boneWeight, int boneID)
+void SkeletalMesh::Unbind(int position, int normal, int texCoord, int boneWeight, int boneID) const
 {
     if (position >= 0)
     {
@@ -166,7 +166,7 @@ void SkeletalMesh::Unbind(int position, int normal, int texCoord, int boneWeight
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SkeletalMesh::Draw()
+void SkeletalMesh::Draw() const
 {
     if (m_Indices.empty())
     {
@@ -181,7 +181,7 @@ void SkeletalMesh::Draw()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void SkeletalMesh::DrawInstanced(unsigned numInstances)
+void SkeletalMesh::DrawInstanced(unsigned numInstances) const
 {
     if (m_Indices.empty())
     {

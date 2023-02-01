@@ -48,7 +48,9 @@ struct Quat
     Quat operator*(const Quat& q) const;
     Vec3 operator*(const Vec3& v) const;
 
+    Quat& operator+=(const Quat& q);
     Quat& operator*=(float f);
+    Quat& operator*=(const Quat& q);
 
     float operator|(const Quat& q) const;
     static float Dot(const Quat& q1, const Quat& q2);

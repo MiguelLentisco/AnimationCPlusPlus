@@ -2,6 +2,7 @@
 
 #include <list>
 
+#include "Core/DualQuaternion.h"
 #include "Core/Mat4.h"
 #include "Core/Transform.h"
 #include "SkeletalMesh/SkeletalMesh.h"
@@ -61,6 +62,20 @@ const std::string& Skeleton::GetJointName(unsigned idx) const
     return m_JointsNames[idx];
     
 } // GetJointName
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void Skeleton::GetInvBindPose(std::vector<DualQuaternion>& invBindPose) const
+{
+    const unsigned int size = m_BindPose.GetSize();
+    invBindPose.resize(size);
+
+    for (unsigned int i = 0; i < size; ++i)
+    {
+        invBindPose[i] = m_BindPose.GetGlobalDualQuaternion(i).Conjugated();
+    }
+    
+} // GetInvBindPose
 
 // ---------------------------------------------------------------------------------------------------------------------
 

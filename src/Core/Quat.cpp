@@ -146,11 +146,40 @@ Vec3 Quat::operator*(const Vec3& v) const
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+Quat& Quat::operator+=(const Quat& q)
+{
+    vector += q.vector;
+    scalar += q.scalar;
+
+    return *this;
+    
+} // operator+=
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 Quat& Quat::operator*=(float f)
 {
     vector *= f;
     scalar *= f;
     
+    return *this;
+    
+} // operator*=
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+Quat& Quat::operator*=(const Quat& q)
+{
+    const float oldX = x;
+    const float oldY = y;
+    const float oldZ = z;
+    const float oldW = w;
+    
+    x =  q.x * oldW + q.y * oldZ - q.z * oldY + q.w * oldX;
+    y = -q.x * oldZ + q.y * oldW + q.z * oldX + q.w * oldY;
+    z =  q.x * oldY - q.y * oldX + q.z * oldW + q.w * oldZ;
+    w = -q.x * oldX - q.y * oldY - q.z * oldZ + q.w * oldW;
+
     return *this;
     
 } // operator*=

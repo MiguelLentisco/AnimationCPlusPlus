@@ -18,7 +18,7 @@ void AnimationInstance::Update(float deltaTime)
 	UpdateAnimation(deltaTime);
 	
 	// Merge pose palette with inverse bind pose
-	m_AnimatedPose.GetMatrixPaletteWithInvPose(m_PosePalette, *m_Skeleton);
+	m_AnimatedPose.GetMatrixPreSkinnedPalette(m_PosePalette, *m_Skeleton);
 	
 } // Update
 
@@ -130,12 +130,12 @@ void SkeletalMeshAnimationApp::Initialize()
 	
     m_GPUAnimInfo.m_AnimatedPose = m_Skeleton.GetRestPose();
     m_GPUAnimInfo.m_PosePalette.resize(m_Skeleton.GetRestPose().GetSize());
-	m_GPUAnimInfo.m_AnimatedPose.GetMatrixPaletteWithInvPose(m_GPUAnimInfo.m_PosePalette, m_Skeleton);
+	m_GPUAnimInfo.m_AnimatedPose.GetMatrixPreSkinnedPalette(m_GPUAnimInfo.m_PosePalette, m_Skeleton);
 	m_GPUAnimInfo.m_Clips = &m_Clips;
 	m_GPUAnimInfo.m_Skeleton = &m_Skeleton;
     m_CPUAnimInfo.m_AnimatedPose = m_Skeleton.GetRestPose();
     m_CPUAnimInfo.m_PosePalette.resize(m_Skeleton.GetRestPose().GetSize());
-	m_CPUAnimInfo.m_AnimatedPose.GetMatrixPaletteWithInvPose(m_GPUAnimInfo.m_PosePalette, m_Skeleton);
+	m_CPUAnimInfo.m_AnimatedPose.GetMatrixPreSkinnedPalette(m_GPUAnimInfo.m_PosePalette, m_Skeleton);
 	m_CPUAnimInfo.m_Clips = &m_Clips;
 	m_CPUAnimInfo.m_Skeleton = &m_Skeleton;
 

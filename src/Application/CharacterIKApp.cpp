@@ -43,7 +43,7 @@ void CharacterIKApp::Initialize()
     
     m_CharacterTexture = new Texture("Assets/Woman.png");
     m_CurrentPose = m_Skeleton.GetRestPose();
-    m_CurrentPose.GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
+    m_CurrentPose.GetMatrixPreSkinnedPalette(m_PreSkinnedPalette, m_Skeleton);
 
     // Set IK with anim curves
     m_RightLeg = new IKLeg(m_Skeleton, "RightUpLeg", "RightLeg", "RightFoot", "RightToeBase");
@@ -314,7 +314,7 @@ void CharacterIKApp::Update(float inDeltaTime)
 	FixToe(m_LeftLeg, leftMotion);
 	FixToe(m_RightLeg, rightMotion);
 
-    m_CurrentPose.GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
+    m_CurrentPose.GetMatrixPreSkinnedPalette(m_PreSkinnedPalette, m_Skeleton);
     
 } // Update
 

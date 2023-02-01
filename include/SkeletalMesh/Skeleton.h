@@ -20,6 +20,8 @@ public:
     const std::vector<std::string>& GetJointNames() const;
     const std::string& GetJointName(unsigned int idx) const;
 
+    void GetInvBindPose(std::vector<DualQuaternion>& invBindPose) const;
+
     void Set(const Pose& rest, const Pose& bind, const std::vector<std::string>& names);
     BoneMap RearrangeSkeleton();
     

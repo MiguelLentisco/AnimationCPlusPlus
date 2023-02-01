@@ -2,6 +2,7 @@
 
 #include <vector>
 
+struct DualQuaternion;
 class Skeleton;
 struct Mat4;
 struct Transform;
@@ -24,9 +25,11 @@ public:
 
     Transform GetGlobalTransform(unsigned int idx) const;
     Transform operator[](unsigned int idx) const;
+    DualQuaternion GetGlobalDualQuaternion(unsigned int idx) const;
 
     void GetMatrixPalette(std::vector<Mat4>& out) const;
-    void GetMatrixPaletteWithInvPose(std::vector<Mat4>& out, const Skeleton& skeleton) const;
+    void GetMatrixPreSkinnedPalette(std::vector<Mat4>& out, const Skeleton& skeleton) const;
+    void GetDualQuaternionPalette(std::vector<DualQuaternion>& out) const;
 
     bool operator==(const Pose& other) const;
     bool operator !=(const Pose& other) const;

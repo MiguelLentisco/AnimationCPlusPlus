@@ -19,6 +19,7 @@
 #include "Application/SkeletalMeshAnimationApp.h"
 #include "SkeletalMesh/SkeletalMesh.h"
 #include "Animation/FastTrack.h"
+#include "Application/DualQuatSkinApp.h"
 
 // Forward declaration
 int WINAPI WinMain(HINSTANCE, HINSTANCE, PSTR, int);
@@ -58,7 +59,7 @@ GLuint gVertexArrayObject = 0;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
     // Standard window definition
-    gApplication = new CharacterIKApp();
+    gApplication = new DualQuatSkinApp();
     
     WNDCLASSEX wndClass;
     wndClass.cbSize = sizeof(WNDCLASSEX);

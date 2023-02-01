@@ -5,6 +5,8 @@
 #include "Core/Quat.h"
 #include "Core/Vec3.h"
 
+struct DualQuaternion;
+
 struct Transform
 { 
     Vec3 position;
@@ -22,6 +24,8 @@ struct Transform
 
     Mat4 ToMat4() const;
     static Transform FromMat4(const Mat4& m);
+    DualQuaternion ToDualQuat() const;
+    static Transform FromDualQuat(const DualQuaternion& dQ);
 
     static Transform Mix(const Transform& from, const Transform& to, float t);
     Transform Mix(const Transform& to, float t) const;

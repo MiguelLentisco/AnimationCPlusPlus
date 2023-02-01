@@ -57,7 +57,7 @@ void AllBlendApp::Initialize()
 	m_FadeController.SetSkeleton(m_Skeleton);
 	m_FadeController.Play(&m_Clips[INITIAL_CLIP]);
 	m_FadeController.Update(0.0f);
-	m_FadeController.GetCurrentPose().GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
+	m_FadeController.GetCurrentPose().GetMatrixPreSkinnedPalette(m_PreSkinnedPalette, m_Skeleton);
 	
 } // Initialize
 
@@ -89,7 +89,7 @@ void AllBlendApp::Update(float deltaTime)
 	}
 	
 	// Merge pose palette with inverse bind pose
-	m_FadeController.GetCurrentPose().GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
+	m_FadeController.GetCurrentPose().GetMatrixPreSkinnedPalette(m_PreSkinnedPalette, m_Skeleton);
     
 } // Update
 

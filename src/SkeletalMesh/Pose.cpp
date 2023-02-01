@@ -1,5 +1,6 @@
 ﻿#include "SkeletalMesh/Pose.h"
 
+#include "Core/DualQuaternion.h"
 #include "Core/Mat4.h"
 #include "Core/Transform.h"
 #include "SkeletalMesh/Skeleton.h"
@@ -134,6 +135,20 @@ Transform Pose::operator[](unsigned idx) const
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+DualQuaternion Pose::GetGlobalDualQuaternion(unsigned idx) const
+{
+    DualQuaternion res = m_Joints[idx].ToDualQuat();
+    for (int p = m_Parents[idx]; p >= 0; p = m_Parents[p])
+    {
+        res *= m_Joints[p].ToDualQuat();
+    }
+    
+    return res;
+    
+} // GetGlobalDualQuaternion
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 void Pose::GetMatrixPalette(std::vector<Mat4>& out) const
 {
     const int size = static_cast<int>(GetSize());
@@ -164,21 +179,35 @@ void Pose::GetMatrixPalette(std::vector<Mat4>& out) const
         out[i] = GetGlobalTransform(i).ToMat4();
     }
     
-} // GetMatrixPaletteWithInvPose
+} // GetMatrixPreSkinnedPalette
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-void Pose::GetMatrixPaletteWithInvPose(std::vector<Mat4>& out, const Skeleton& skeleton) const
+void Pose::GetMatrixPreSkinnedPalette(std::vector<Mat4>& out, const Skeleton& skeleton) const
 {
     GetMatrixPalette(out);
     
     const unsigned int numBones = out.size();
     for (unsigned int i = 0; i < numBones; ++i)
     {
-        out[i] *=  skeleton.GetInvBindPose()[i];
+        out[i] *= skeleton.GetInvBindPose()[i];
     }
     
-} // GetMatrixPaletteWithInvPose
+} // GetMatrixPreSkinnedPalette
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void Pose::GetDualQuaternionPalette(std::vector<DualQuaternion>& out) const
+{
+    const unsigned int size = GetSize();
+    out.resize(size);
+
+    for (unsigned int i = 0; i < size; ++i)
+    {
+        out[i] = GetGlobalDualQuaternion(i);
+    }
+    
+} // GetDualQuaternionPalette
 
 // ---------------------------------------------------------------------------------------------------------------------
 

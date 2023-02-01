@@ -49,7 +49,7 @@ void SimpleBlendApp::Initialize()
 	}
 	
 	m_FinalPose = m_Skeleton.GetRestPose();
-	m_FinalPose.GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
+	m_FinalPose.GetMatrixPreSkinnedPalette(m_PreSkinnedPalette, m_Skeleton);
 	
 	for (const Clip& clip : clips)
 	{
@@ -93,7 +93,7 @@ void SimpleBlendApp::Update(float deltaTime)
 	Pose::Blend(m_FinalPose, m_A1.m_Pose, m_A2.m_Pose, alpha, ROOT_BONE);
 	
 	// Merge pose palette with inverse bind pose
-	m_FinalPose.GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
+	m_FinalPose.GetMatrixPreSkinnedPalette(m_PreSkinnedPalette, m_Skeleton);
 	const std::vector<Mat4>& invBindPose = m_Skeleton.GetInvBindPose();
 	
 	m_BlendTime += deltaTime;

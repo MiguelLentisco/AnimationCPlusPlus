@@ -50,7 +50,7 @@ void AdditiveBlendApp::Initialize()
     m_Texture = new Texture("Assets/Woman.png");
 
 	m_CurrentPose = m_Skeleton.GetRestPose();
-	m_CurrentPose.GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
+	m_CurrentPose.GetMatrixPreSkinnedPalette(m_PreSkinnedPalette, m_Skeleton);
 	m_AddPose = m_Skeleton.GetRestPose();
 
 	// Animations: [Running, Jump2, PickUp, SitIdle, Idle, Punch, Sitting, Walking, Jump, Lean_Left]
@@ -84,7 +84,7 @@ void AdditiveBlendApp::Update(float deltaTime)
 	Pose::Add(m_CurrentPose, m_CurrentPose, m_AddPose, m_AddBasePose, ROOT_BONE);
 	
 	// Merge pose palette with inverse bind pose
-	m_CurrentPose.GetMatrixPaletteWithInvPose(m_PreSkinnedPalette, m_Skeleton);
+	m_CurrentPose.GetMatrixPreSkinnedPalette(m_PreSkinnedPalette, m_Skeleton);
     
 } // Update
 

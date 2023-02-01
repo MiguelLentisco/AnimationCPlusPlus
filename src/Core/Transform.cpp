@@ -1,6 +1,7 @@
 ﻿#include "Core/Transform.h"
 
 #include "Core/BasicUtils.h"
+#include "Core/DualQuaternion.h"
 #include "Core/Mat4.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -85,6 +86,27 @@ Transform Transform::FromMat4(const Mat4& m)
     return {position, rotation, scale};
     
 } // FromMat4
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+DualQuaternion Transform::ToDualQuat() const
+{
+    const Quat dual = {position, 0.f};
+    const Quat real = rotation;
+    
+    return {real, real * dual * .5f};
+    
+} // ToDualQuat
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+Transform Transform::FromDualQuat(const DualQuaternion& dQ)
+{
+    const Quat position = dQ.real.Conjugate() * (dQ.dual * 2.f);
+    
+    return {position.vector, dQ.real};
+    
+} // FromDualQuat
 
 // ---------------------------------------------------------------------------------------------------------------------
 

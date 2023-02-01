@@ -38,12 +38,12 @@ public:
     const std::vector<unsigned int>& GetIndices() const { return m_Indices; }
     std::vector<unsigned int>& GetIndices() { return m_Indices; }
     
-    void UpdateOpenGLBuffers(); // Sync with GPU
-    void Bind(int position, int normal, int texCoord, int boneWeight, int boneID);
-    void Unbind(int position, int normal, int texCoord, int boneWeight, int boneID);
+    void UpdateOpenGLBuffers() const; // Sync with GPU
+    void Bind(int position, int normal, int texCoord, int boneWeight, int boneID) const;
+    void Unbind(int position, int normal, int texCoord, int boneWeight, int boneID) const;
     
-    void Draw();
-    void DrawInstanced(unsigned int numInstances);
+    void Draw() const;
+    void DrawInstanced(unsigned int numInstances) const;
 
     void CPUSkin(const Skeleton& skeleton, const Pose& pose);
     void CPUSkin(const std::vector<Mat4>& animatedPose);
