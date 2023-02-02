@@ -36,7 +36,6 @@ void AdditiveBlendApp::Initialize()
 	for (SkeletalMesh& mesh : m_Meshes)
 	{
 		mesh.RearrangeMesh(boneMap);
-		mesh.UpdateOpenGLBuffers();
 	}
 	
 	for (const Clip& clip : clips)

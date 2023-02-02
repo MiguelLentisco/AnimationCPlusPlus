@@ -45,7 +45,6 @@ void SimpleBlendApp::Initialize()
 	for (SkeletalMesh& mesh : m_Meshes)
 	{
 		mesh.RearrangeMesh(boneMap);
-		mesh.UpdateOpenGLBuffers();
 	}
 	
 	m_FinalPose = m_Skeleton.GetRestPose();
