@@ -137,16 +137,19 @@ void DebugDrawer::FromPose(const Pose& pose)
     }
 
     m_Points.resize(requiredVerts);
+    
+    unsigned int idx = 0;
     for (unsigned int i = 0; i < numJoints; ++i)
     {
-        if (pose.GetParent(i) < 0)
+        const int parent = pose.GetParent(i);
+        if (parent < 0)
         {
             continue;
         }
-
-        const unsigned int idx = 2 * i;
+        
         m_Points[idx] = pose.GetGlobalTransform(i).position;
-        m_Points[idx + 1] = pose.GetGlobalTransform(pose.GetParent(i)).position;
+        m_Points[idx + 1] = pose.GetGlobalTransform(parent).position;
+        idx += 2;
     }
     
 } // FromPose
