@@ -18,7 +18,9 @@ template Uniform<Vec2>;
 template Uniform<Vec3>;
 template Uniform<Vec4>;
 template Uniform<IVec4>;
+template Uniform<IVec2>;
 template Uniform<Mat4>;
+template Uniform<Quat>;
 template Uniform<DualQuaternion>;
 
 // ---------------------------------------------------------------------------------------------------------------------
