@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class AnimTexture;
 struct Vec3;
 struct Quat;
 class Pose;
@@ -27,5 +28,8 @@ public:
 
     template <typename TRACK>
     static Pose MakeAdditivePose(const Skeleton& skeleton, const TClip<TRACK>& clip);
+
+    template <typename TRACK>
+    static void BakeAnimationToTexture(const Skeleton& skeleton, const TClip<TRACK>& clip, AnimTexture& outTex);
     
 }; // AnimationUtilities

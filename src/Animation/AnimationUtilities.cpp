@@ -6,6 +6,9 @@
 #include "Animation/FastTrack.h"
 #include "Animation/TransformTrack.h"
 #include "Animation/Clip.h"
+#include "Core/BasicUtils.h"
+#include "Core/Transform.h"
+#include "Render/AnimTexture.h"
 #include "SkeletalMesh/Skeleton.h"
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -44,6 +47,41 @@ Pose AnimationUtilities::MakeAdditivePose(const Skeleton& skeleton, const TClip<
     return result;
     
 } // MakeAdditivePose
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+template void AnimationUtilities::BakeAnimationToTexture(const Skeleton&, const TClip<TransformTrack>&, AnimTexture&);
+template void AnimationUtilities::BakeAnimationToTexture(const Skeleton&, const TClip<FastTransformTrack>&, AnimTexture&);
+
+template <typename TRACK>
+void AnimationUtilities::BakeAnimationToTexture(const Skeleton& skeleton, const TClip<TRACK>& clip, AnimTexture& outTex)
+{
+    Pose pose = skeleton.GetBindPose();
+    
+    const unsigned int texWidth = outTex.GetSize();
+    const unsigned int numTotalChannels = pose.GetSize();
+    const float start = clip.GetStartTime();
+    const float end = clip.GetEndTime();
+    
+    for (unsigned int x = 0; x < texWidth; ++x)
+    {
+        const float alpha = static_cast<float>(x) / static_cast<float>(texWidth - 1);
+        float time = BasicUtils::Lerp(start, end, alpha);
+        clip.Sample(pose, time);
+        
+        for (unsigned int y = 0; y < numTotalChannels; ++y)
+        {
+            const unsigned int yShift = 3 * y;
+            Transform jointTransform = pose.GetGlobalTransform(y);
+            outTex.SetTexel(x, yShift + 0, jointTransform.position);
+            outTex.SetTexel(x, yShift + 1, jointTransform.rotation);
+            outTex.SetTexel(x, yShift + 2, jointTransform.scale);
+        }
+    }
+
+    outTex.UploadTextureDataToGPU();
+    
+} // BakeAnimationToTexture
 
 // ---------------------------------------------------------------------------------------------------------------------
 
