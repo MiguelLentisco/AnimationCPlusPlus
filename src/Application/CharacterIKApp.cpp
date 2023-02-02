@@ -40,6 +40,12 @@ void CharacterIKApp::Initialize()
     m_Skeleton = GLTFLoader::LoadSkeleton(character_data);
     const std::vector<Clip> clips = GLTFLoader::LoadAnimationClips(character_data);
     GLTFLoader::FreeGLTFFile(character_data);
+
+	const BoneMap boneMap = m_Skeleton.RearrangeSkeleton();
+	for (SkeletalMesh& mesh : m_CharacterMeshes)
+	{
+		mesh.RearrangeMesh(boneMap);
+	}
     
     m_CharacterTexture = new Texture("Assets/Woman.png");
     m_CurrentPose = m_Skeleton.GetRestPose();
@@ -86,7 +92,9 @@ void CharacterIKApp::Initialize()
     // Animations: [Running, Jump2, PickUp, SitIdle, Idle, Punch, Sitting, Walking, Jump, Lean_Left]
     for (const Clip& clip : clips)
     {
-        m_Clips.push_back(AnimationUtilities::OptimizeClip(clip));
+    	FastClip optimizedClip = AnimationUtilities::OptimizeClip(clip);
+    	optimizedClip.RearrangeClip(boneMap);
+    	m_Clips.emplace_back(optimizedClip);
     }
     m_CurrentClipIdx = 7; // Walking
 

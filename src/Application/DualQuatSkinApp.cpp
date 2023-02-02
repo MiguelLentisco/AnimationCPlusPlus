@@ -32,9 +32,17 @@ void DualQuatSkinApp::Initialize()
     const std::vector<Clip> clips = GLTFLoader::LoadAnimationClips(gltf);
     GLTFLoader::FreeGLTFFile(gltf);
 
+	const BoneMap boneMap = m_Skeleton.RearrangeSkeleton();
+	for (SkeletalMesh& mesh : m_Meshes)
+	{
+		mesh.RearrangeMesh(boneMap);
+	}
+
 	for (const Clip& clip : clips)
 	{
-		m_Clips.emplace_back(AnimationUtilities::OptimizeClip(clip));
+		FastClip optimizedClip = AnimationUtilities::OptimizeClip(clip);
+		optimizedClip.RearrangeClip(boneMap);
+		m_Clips.emplace_back(optimizedClip);
 	}
 
     m_LBSShader = new Shader("Shaders/preskinned.vert", "Shaders/lit.frag");
