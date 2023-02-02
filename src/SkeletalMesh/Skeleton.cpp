@@ -142,7 +142,7 @@ BoneMap Skeleton::RearrangeSkeleton()
         const int oldID = newToOldID[static_cast<int>(i)];
         newRestPose.SetLocalTransform(i, m_RestPose.GetLocalTransform(oldID));
         newBindPose.SetLocalTransform(i, m_BindPose.GetLocalTransform(oldID));
-        newNames[i] = GetJointName(i);
+        newNames[i] = GetJointName(oldID);
 
         const int newParentID = oldToNewID[m_BindPose.GetParent(oldID)];
         newRestPose.SetParent(i, newParentID);
