@@ -77,7 +77,7 @@ void AllBlendApp::Update(float deltaTime)
 		// https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
 		static std::random_device rd;  //Will be used to obtain a seed for the random number engine
 		static std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-		static std::uniform_int_distribution<unsigned> uniformDist(0, m_Clips.size() - 1);
+		static const std::uniform_int_distribution<unsigned> uniformDist(0, m_Clips.size() - 1);
 		
 		unsigned int clip = uniformDist(gen);
 		while (clip == m_CurrentClip)

@@ -37,7 +37,7 @@ vec3 QMulV(vec4 q, vec3 v)
 
 mat4 GetModel(int instance)
 {
-    vec3 position = mode_pos[instance];
+    vec3 position = model_pos[instance];
     vec4 rotation = model_rot[instance];
     vec3 scale = model_scl[instance];
     
@@ -57,7 +57,7 @@ mat4 GetModel(int instance)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-mat4 GetPose(int join, int instance)
+mat4 GetPose(int joint, int instance)
 {
     int t_now = frames[instance].x;
     int t_next = frames[instance].y;
@@ -98,14 +98,14 @@ mat4 GetPose(int join, int instance)
 void main()
 {
     mat4 skin = (GetPose(joints.x, gl_InstanceID) * invBindPose[joints.x]) * weights.x;
-    mat4 skin = (GetPose(joints.y, gl_InstanceID) * invBindPose[joints.y]) * weights.w;
-    mat4 skin = (GetPose(joints.z, gl_InstanceID) * invBindPose[joints.z]) * weights.z;
-    mat4 skin = (GetPose(joints.w, gl_InstanceID) * invBindPose[joints.w]) * weights.w;
+    skin += (GetPose(joints.y, gl_InstanceID) * invBindPose[joints.y]) * weights.w;
+    skin += (GetPose(joints.z, gl_InstanceID) * invBindPose[joints.z]) * weights.z;
+    skin += (GetPose(joints.w, gl_InstanceID) * invBindPose[joints.w]) * weights.w;
     mat4 model = GetModel(gl_InstanceID);
     
     gl_Position = projection * view * model * skin * vec4(position, 1.0);
     fragPos = vec3(model * skin * vec4(position, 1.0));
-    norm = vec3(model * skin * vec4(nornmal, 0.f));
+    norm = vec3(model * skin * vec4(normal, 0.f));
     uv = texCoord;
     
 } // main

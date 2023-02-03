@@ -1,5 +1,7 @@
 ﻿#include "Animation/Crowd.h"
 
+#include <random>
+
 #include "Animation/Clip.h"
 #include "Core/BasicUtils.h"
 #include "Core/Transform.h"
@@ -83,6 +85,73 @@ void Crowd::Update(float deltaTime, const TClip<TRACK>& clip, unsigned texWidth)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+template void Crowd::RandomizeTimes(const Clip&);
+template void Crowd::RandomizeTimes(const FastClip&);
+
+template <typename TRACK>
+void Crowd::RandomizeTimes(const TClip<TRACK>& clip)
+{
+    // https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
+    static std::random_device rd;  //Will be used to obtain a seed for the random number engine
+    static std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+    const std::uniform_real_distribution<float> uniformDist(clip.GetStartTime(), clip.GetEndTime());
+    
+    for (float& currentTime : m_CurrentPlayTimes)
+    {
+        currentTime = uniformDist(gen);
+    }
+    
+} // RandomizeTimes
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+void Crowd::RandomizePositions(const Vec3& min, const Vec3& max, float radius)
+{
+    const unsigned int size = m_CurrentPlayTimes.size();
+    unsigned int breakLoop = 0;
+    unsigned int currentSize = 0;
+    
+    while (currentSize < size)
+    {
+        static constexpr unsigned int MAX_LOOP = 2000;
+        if (breakLoop >= MAX_LOOP)
+        {
+            return;
+        }
+
+        static std::random_device rd;  //Will be used to obtain a seed for the random number engine
+        static std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+        const std::uniform_real_distribution<float> uniformDistX(min.x, max.x);
+        const std::uniform_real_distribution<float> uniformDistY(min.y, max.y);
+        const std::uniform_real_distribution<float> uniformDistZ(min.z, max.z);
+        
+        const Vec3 newPoint = {uniformDistX(gen), uniformDistY(gen), uniformDistZ(gen)};
+        const float radiusSq = radius * radius;
+        bool bValid = true;
+        
+        for (const Vec3& pos : m_Positions)
+        {
+            if ((pos - newPoint).LenSq() < radiusSq)
+            {
+                bValid = false;
+                breakLoop += 1;
+                break;
+            }
+        }
+
+        if (!bValid)
+        {
+            continue;
+        }
+
+        m_Positions[currentSize] = newPoint;
+        ++currentSize;
+    }
+    
+} // RandomizePositions
+
+// ---------------------------------------------------------------------------------------------------------------------
+
 float Crowd::AdjustTime(float t, float start, float end, bool bLooping)
 {
     const float duration = end - start;
@@ -146,7 +215,7 @@ void Crowd::UpdateInterpolationTimes(float start, float duration, unsigned textW
     {
         if (m_Frames[i].x == m_Frames[i].y)
         {
-            m_Frames[i] = 1.f;
+            m_Times[i] = 1;
             continue;
         }
 

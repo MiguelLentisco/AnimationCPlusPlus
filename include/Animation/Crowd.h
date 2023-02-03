@@ -22,6 +22,10 @@ public:
 
     template <typename TRACK>
     void Update(float deltaTime, const TClip<TRACK>& clip, unsigned int texWidth);
+
+    template <typename TRACK>
+    void RandomizeTimes(const TClip<TRACK>& clip);
+    void RandomizePositions(const Vec3& min, const Vec3& max, float radius);
     
 protected:
     std::vector<Vec3> m_Positions;
