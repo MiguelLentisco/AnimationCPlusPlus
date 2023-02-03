@@ -3328,12 +3328,22 @@
     <ClInclude Include="include\SkeletalMesh\TriangleMesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="Assets\dq.gltf" />
     <Content Include="Assets\dq.png" />
     <Content Include="Assets\IKCourse.gltf" />
     <Content Include="Assets\uv.png" />
     <Content Include="Assets\Woman.gltf" />
     <Content Include="Assets\Woman.png" />
+    <Content Include="ExamplesGIF\AdditiveBlendApp.gif" />
+    <Content Include="ExamplesGIF\BlendApp.gif" />
+    <Content Include="ExamplesGIF\CrowdApp.gif" />
+    <Content Include="ExamplesGIF\DualQuaternionSkinningApp.gif" />
+    <Content Include="ExamplesGIF\FABRIKApp.gif" />
+    <Content Include="ExamplesGIF\IKApp.gif" />
+    <Content Include="ExamplesGIF\InterpolationsApp.png" />
+    <Content Include="ExamplesGIF\SkeletalMeshApp.gif" />
+    <Content Include="README.md" />
     <Content Include="Shaders\crowd.vert" />
     <Content Include="Shaders\dualquat_skinned.vert" />
     <Content Include="Shaders\lit.frag" />
